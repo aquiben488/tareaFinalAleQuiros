@@ -35,7 +35,7 @@ import java.util.Date;
     @NamedQuery(name = "Usuarios.findByIdUsuario", query = "SELECT u FROM Usuarios u WHERE u.idUsuario = :idUsuario"),
     @NamedQuery(name = "Usuarios.findByNombre", query = "SELECT u FROM Usuarios u WHERE u.nombre = :nombre"),
     @NamedQuery(name = "Usuarios.findByEmail", query = "SELECT u FROM Usuarios u WHERE u.email = :email"),
-    @NamedQuery(name = "Usuarios.findByContrase\u00f1a", query = "SELECT u FROM Usuarios u WHERE u.contrase\u00f1a = :contrase\u00f1a"),
+    @NamedQuery(name = "Usuarios.findByContrasena", query = "SELECT u FROM Usuarios u WHERE u.contrasena = :contrasena"),
     @NamedQuery(name = "Usuarios.findByFechaRegistro", query = "SELECT u FROM Usuarios u WHERE u.fechaRegistro = :fechaRegistro")})
 public class Usuarios implements Serializable {
 
@@ -52,7 +52,7 @@ public class Usuarios implements Serializable {
     @Column(name = "email")
     private String email;
     @Basic(optional = false)
-    @Column(name = "contrase\u00f1a")
+    @Column(name = "contrasena")
     private String contraseña;
     @Column(name = "fechaRegistro")
     @Temporal(TemporalType.DATE)

@@ -28,22 +28,22 @@ import java.util.Date;
  * @author ale
  */
 @Entity
-@Table(name = "rese\u00f1as")
+@Table(name = "resenas") // antes reseñas pero la ñ da problemas
 @XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "Rese\u00f1as.findAll", query = "SELECT r FROM Rese\u00f1as r"),
-    @NamedQuery(name = "Rese\u00f1as.findByIdRese\u00f1a", query = "SELECT r FROM Rese\u00f1as r WHERE r.idRese\u00f1a = :idRese\u00f1a"),
-    @NamedQuery(name = "Rese\u00f1as.findByPuntuacion", query = "SELECT r FROM Rese\u00f1as r WHERE r.puntuacion = :puntuacion"),
-    @NamedQuery(name = "Rese\u00f1as.findByFechaRese\u00f1a", query = "SELECT r FROM Rese\u00f1as r WHERE r.fechaRese\u00f1a = :fechaRese\u00f1a"),
-    @NamedQuery(name = "Rese\u00f1as.findByUtiles", query = "SELECT r FROM Rese\u00f1as r WHERE r.utiles = :utiles"),
-    @NamedQuery(name = "Rese\u00f1as.findBySpoilers", query = "SELECT r FROM Rese\u00f1as r WHERE r.spoilers = :spoilers")})
+    @NamedQuery(name = "Resenas.findAll", query = "SELECT r FROM Resenas r"),
+    @NamedQuery(name = "Resenas.findByIdResena", query = "SELECT r FROM Resenas r WHERE r.idResena = :idResena"),
+    @NamedQuery(name = "Resenas.findByPuntuacion", query = "SELECT r FROM Resenas r WHERE r.puntuacion = :puntuacion"),
+    @NamedQuery(name = "Resenas.findByFechaResena", query = "SELECT r FROM Resenas r WHERE r.fechaResena = :fechaResena"),
+    @NamedQuery(name = "Resenas.findByUtiles", query = "SELECT r FROM Resenas r WHERE r.utiles = :utiles"),
+    @NamedQuery(name = "Resenas.findBySpoilers", query = "SELECT r FROM Resenas r WHERE r.spoilers = :spoilers")})
 public class Reseñas implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
-    @Column(name = "idRese\u00f1a")
+    @Column(name = "idResena")
     private Integer idReseña;
     // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
     @Basic(optional = false)
@@ -52,7 +52,7 @@ public class Reseñas implements Serializable {
     @Lob
     @Column(name = "comentario")
     private String comentario;
-    @Column(name = "fechaRese\u00f1a")
+    @Column(name = "fechaResena")
     @Temporal(TemporalType.DATE)
     private Date fechaReseña;
     @Column(name = "utiles")
@@ -164,7 +164,7 @@ public class Reseñas implements Serializable {
 
     @Override
     public String toString() {
-        return "daw.Rese\u00f1as[ idRese\u00f1a=" + idReseña + " ]";
+        return "daw.Resenas[ idResena=" + idReseña + " ]";
     }
     
 }
