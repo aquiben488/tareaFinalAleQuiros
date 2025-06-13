@@ -8,6 +8,26 @@ import utils.PersistenceManager;
 import java.util.List;
 
 public class CategoriaController {
+    /**
+     * La logica de los metodos es la siguiente:
+     *
+     * cualquier error en datos de entrada se lanza una excepcion de tipo
+     * IllegalArgumentException
+     * cualquier error en la base de datos se lanza una excepcion de tipo
+     * RuntimeException
+     *
+     * el entityManager se cierra siempre en el finally
+     * para evitar que se quede abierto o se cierre 2 veces
+     *
+     * en el caso de buscar todos se considera un error de base de datos si no hay
+     * elementos
+     * ya que no hay datos de entrada que puedan dar error
+     *
+     * la estrategia para controlar la integridad de los datos en actualizacion
+     * no es completamente robusta (habria que hacer varias condiciones y buscar
+     * codigo de error
+     * concreto) pero por simplicidad solo se busca texto en el mensaje de error
+     */
 
     public void crear(Categoria categoria) {
         EntityManager em = PersistenceManager.getEntityManager();
@@ -18,7 +38,10 @@ public class CategoriaController {
         } catch (EntityExistsException e) {
             throw new IllegalArgumentException("La categoria ya existe");
         } catch (Exception e) {
-            throw new RuntimeException("No se ha podido crear la categoria");
+            if (e.getMessage() != null && e.getMessage().contains("Duplicate entry")) {
+                throw new IllegalArgumentException("ya existe una categoria con ese nombre");
+            }
+            throw new RuntimeException("No se ha podido crear la categoria" + e.getMessage());
         } finally {
             if (em.getTransaction().isActive()) {
                 em.getTransaction().rollback();
@@ -35,10 +58,11 @@ public class CategoriaController {
                 return cat;
             }
             throw new IllegalArgumentException("No se ha encontrado categoria con ese Id");
+        } catch (IllegalArgumentException e) {
+            throw e;
         } catch (Exception e) {
             throw new RuntimeException("Ha ocurrido un error al buscar la categoria: " + e.getMessage());
-        }
-        finally {
+        } finally {
             em.close();
         }
     }
@@ -51,10 +75,11 @@ public class CategoriaController {
                 return list;
             }
             throw new RuntimeException("No existe ninguna categoria");
+        } catch (RuntimeException e) {
+            throw e;
         } catch (Exception e) {
             throw new RuntimeException("Ha ocurrido un error al buscar las categorias: " + e.getMessage());
-        }
-        finally {
+        } finally {
             em.close();
         }
     }
@@ -85,6 +110,8 @@ public class CategoriaController {
             }
             em.remove(cat);
             em.getTransaction().commit();
+        } catch (IllegalArgumentException e) {
+            throw e;
         } catch (Exception e) {
             throw new RuntimeException("No se ha podido eliminar la categoria: " + e.getMessage());
         } finally {

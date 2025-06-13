@@ -3,12 +3,32 @@ package controllers;
 import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.NoResultException;
-import jakarta.persistence.TypedQuery;
 import models.Usuario;
 import utils.PersistenceManager;
 import java.util.List;
 
 public class UsuarioController {
+
+    /**
+     * La logica de los metodos es la siguiente:
+     *
+     * cualquier error en datos de entrada se lanza una excepcion de tipo
+     * IllegalArgumentException
+     * cualquier error en la base de datos se lanza una excepcion de tipo
+     * RuntimeException
+     *
+     * el entityManager se cierra siempre en el finally
+     * para evitar que se quede abierto o se cierre 2 veces
+     *
+     * en el caso de buscar todos se considera un error de base de datos si no hay
+     * elementos
+     * ya que no hay datos de entrada que puedan dar error
+     *
+     * la estrategia para controlar la integridad de los datos en actualizacion
+     * no es completamente robusta (habria que hacer varias condiciones y buscar
+     * codigo de error
+     * concreto) pero por simplicidad solo se busca texto en el mensaje de error
+     */
 
     public void crear(Usuario usuario) {
         EntityManager em = PersistenceManager.getEntityManager();
@@ -19,10 +39,13 @@ public class UsuarioController {
         } catch (EntityExistsException e) {
             throw new IllegalArgumentException("El usuario ya existe");
         } catch (Exception e) {
-            if (e.getMessage() != null && e.getMessage().contains("El usuario ya existe")) {
+            // Detectar email duplicado (patón KISS)
+            if (e.getMessage() != null && e.getMessage().contains("Duplicate entry")) {
+                if (e.getMessage().contains("email")) {
+                    throw new IllegalArgumentException("Ya existe un usuario con ese email");
+                }
                 throw new IllegalArgumentException("El usuario ya existe");
             }
-            
             throw new RuntimeException("No se ha podido crear el usuario");
         } finally {
             if (em.getTransaction().isActive()) {
@@ -40,6 +63,8 @@ public class UsuarioController {
                 return usu;
             }
             throw new IllegalArgumentException("No se ha encontrado usuario con ese Id");
+        } catch (IllegalArgumentException e) {
+            throw e;
         } catch (Exception e) {
             throw new RuntimeException("Ha ocurrido un error al buscar el usuario: " + e.getMessage());
         } finally {
@@ -55,6 +80,8 @@ public class UsuarioController {
                 return list;
             }
             throw new RuntimeException("No se ha encontrado ningun usuario registrado");
+        } catch (RuntimeException e) {
+            throw e;
         } catch (Exception e) {
             throw new RuntimeException("Ha ocurrido un error al buscar los usuarios: " + e.getMessage());
         } finally {
@@ -72,6 +99,8 @@ public class UsuarioController {
             em.getTransaction().begin();
             em.merge(usuario);
             em.getTransaction().commit();
+        } catch (IllegalArgumentException e) {
+            throw e;
         } catch (Exception e) {
             throw new RuntimeException("Error al actualizar usuario: " + e.getMessage());
         } finally {
@@ -92,15 +121,17 @@ public class UsuarioController {
             }
 
             em.getTransaction().begin();
-            // ReseñaController.moverReseñasAEliminadas(usu);
-            // movemos todas las reseñas del usuario a usuario "Eliminado"
-            // TODO: Implementar moverReseñasAEliminadas
+            ReseñaController.moverReseñasAEliminadas(usu);
             em.remove(usu);
             em.getTransaction().commit();
+        } catch (IllegalArgumentException e) {
+            throw e;
         } catch (Exception e) {
-            em.getTransaction().rollback();
-            throw new RuntimeException("No se ha podido eliminar el usuario");
+            throw new RuntimeException("No se ha podido eliminar el usuario: " + e.getMessage());
         } finally {
+            if (em.getTransaction().isActive()) {
+                em.getTransaction().rollback();
+            }
             em.close();
         }
     }

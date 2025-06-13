@@ -35,23 +35,17 @@ public class ReseñaController {
     public void crear(Reseña reseña) {
         EntityManager em = PersistenceManager.getEntityManager();
         try {
-            String mensaje = "";
-            if (!comprobarIntegridad(em, reseña, mensaje)) {
-                throw new IllegalArgumentException(mensaje); // si no se cumple, se lanza una excepcion
-            }
-            List<Reseña> list = em.createNamedQuery("Reseña.findByUsuarioVideojuego", Reseña.class)
-                    .setParameter("usuario", reseña.getIdUsuario())
-                    .setParameter("videojuego", reseña.getIdVideojuego())
-                    .getResultList();
-            if (!list.isEmpty()) {
-                throw new IllegalArgumentException("Ya existe una reseña para ese videojuego de ese usuario");
-            }
+
             em.getTransaction().begin();
             em.persist(reseña);
             em.getTransaction().commit();
         } catch (EntityExistsException e) {
             throw new IllegalArgumentException("La reseña ya existe en la base de datos");
         } catch (Exception e) {
+            // Detectar duplicado usuario-videojuego (si existe constraint UNIQUE en BD)
+            if (e.getMessage() != null && e.getMessage().contains("Duplicate entry")) {
+                throw new IllegalArgumentException("Ya existe una reseña para ese videojuego de ese usuario");
+            }
             throw new RuntimeException("Ha ocurrido un error al crear la reseña: " + e.getMessage());
         } finally {
             if (em.getTransaction().isActive()) {
@@ -69,6 +63,8 @@ public class ReseñaController {
                 throw new IllegalArgumentException("No se ha encontrado la reseña con ese Id");
             }
             return res;
+        } catch (IllegalArgumentException e) {
+            throw e;
         } catch (Exception e) {
             throw new RuntimeException("Ha ocurrido un error al buscar la reseña: " + e.getMessage());
         } finally {
@@ -84,6 +80,8 @@ public class ReseñaController {
                 return list;
             }
             throw new RuntimeException("No existe ninguna reseña registrada");
+        } catch (RuntimeException e) {
+            throw e;
         } catch (Exception e) {
             throw new RuntimeException("Ha ocurrido un error al buscar las reseñas: " + e.getMessage());
         } finally {
@@ -98,10 +96,11 @@ public class ReseñaController {
             if (!comprobarIntegridad(em, reseña, mensaje)) {
                 throw new IllegalArgumentException(mensaje); // si no se cumple, se lanza una excepcion
             }
-
             em.getTransaction().begin();
             em.merge(reseña);
             em.getTransaction().commit();
+        } catch (IllegalArgumentException e) {
+            throw e;
         } catch (Exception e) {
             throw new RuntimeException("Ha ocurrido un error al actualizar la reseña: " + e.getMessage());
         } finally {
@@ -125,11 +124,11 @@ public class ReseñaController {
         } catch (IllegalArgumentException e) {
             throw e;
         } catch (Exception e) {
+            throw new RuntimeException("No se ha podido eliminar la reseña");
+        } finally {
             if (em.getTransaction().isActive()) {
                 em.getTransaction().rollback();
             }
-            throw new RuntimeException("No se ha podido eliminar la reseña");
-        } finally {
             em.close();
         }
     }
@@ -141,7 +140,7 @@ public class ReseñaController {
         EntityManager em = PersistenceManager.getEntityManager();
         try {
             List<Reseña> list = em
-                    .createQuery("SELECT r FROM Reseña r WHERE r.idVideojuego.idVideojuego = :idVideojuego",
+                    .createQuery("SELECT r FROM Reseña r WHERE r.videojuego.idVideojuego = :idVideojuego",
                             Reseña.class)
                     .setParameter("idVideojuego", videojuego.getIdVideojuego())
                     .getResultList();
@@ -149,6 +148,8 @@ public class ReseñaController {
                 return list;
             }
             throw new RuntimeException("No existe ninguna reseña para ese videojuego");
+        } catch (RuntimeException e) {
+            throw e;
         } catch (Exception e) {
             throw new RuntimeException("Ha ocurrido un error al buscar las reseñas: " + e.getMessage());
         } finally {
@@ -163,13 +164,15 @@ public class ReseñaController {
         EntityManager em = PersistenceManager.getEntityManager();
         try {
             List<Reseña> list = em
-                    .createQuery("SELECT r FROM Reseña r WHERE r.idUsuario.idUsuario = :idUsuario", Reseña.class)
+                    .createQuery("SELECT r FROM Reseña r WHERE r.usuario.idUsuario = :idUsuario", Reseña.class)
                     .setParameter("idUsuario", usuario.getIdUsuario())
                     .getResultList();
             if (!list.isEmpty()) {
                 return list;
             }
             throw new RuntimeException("No existe ninguna reseña para ese usuario");
+        } catch (RuntimeException e) {
+            throw e;
         } catch (Exception e) {
             throw new RuntimeException("Ha ocurrido un error al buscar las reseñas: " + e.getMessage());
         } finally {
@@ -189,7 +192,10 @@ public class ReseñaController {
             if (!list.isEmpty()) {
                 return list;
             }
-            throw new IllegalArgumentException("No existe ninguna reseña con puntuación igual o superior a " + puntuacionMinima);
+            throw new IllegalArgumentException(
+                    "No existe ninguna reseña con puntuación igual o superior a " + puntuacionMinima);
+        } catch (IllegalArgumentException e) {
+            throw e;
         } catch (Exception e) {
             throw new RuntimeException("Ha ocurrido un error al buscar las reseñas: " + e.getMessage());
         } finally {
@@ -211,11 +217,11 @@ public class ReseñaController {
         } catch (IllegalArgumentException e) {
             throw e;
         } catch (Exception e) {
+            throw new RuntimeException("No se ha podido marcar la reseña como útil");
+        } finally {
             if (em.getTransaction().isActive()) {
                 em.getTransaction().rollback();
             }
-            throw new RuntimeException("No se ha podido marcar la reseña como útil");
-        } finally {
             em.close();
         }
     }
@@ -229,6 +235,8 @@ public class ReseñaController {
                 return list;
             }
             throw new RuntimeException("No existe ninguna reseña");
+        } catch (RuntimeException e) {
+            throw e;
         } catch (Exception e) {
             throw new RuntimeException("Ha ocurrido un error al buscar las reseñas: " + e.getMessage());
         } finally {
@@ -245,6 +253,8 @@ public class ReseñaController {
                 return list;
             }
             throw new RuntimeException("No existe ninguna reseña");
+        } catch (RuntimeException e) {
+            throw e;
         } catch (Exception e) {
             throw new RuntimeException("Ha ocurrido un error al buscar las reseñas: " + e.getMessage());
         } finally {
@@ -255,7 +265,9 @@ public class ReseñaController {
     public static void moverReseñasAEliminadas(Usuario usuario) {
         EntityManager em = PersistenceManager.getEntityManager();
         try {
-            List<Reseña> list = em.createQuery("SELECT r FROM Reseña r WHERE r.idUsuario = :idUsuario", Reseña.class)
+            em.getTransaction().begin();
+            List<Reseña> list = em
+                    .createQuery("SELECT r FROM Reseña r WHERE r.usuario.idUsuario = :idUsuario", Reseña.class)
                     .setParameter("idUsuario", usuario.getIdUsuario())
                     .getResultList();
             for (Reseña res : list) {
@@ -264,15 +276,19 @@ public class ReseñaController {
             }
             em.getTransaction().commit();
         } catch (Exception e) {
-            throw new RuntimeException("Ha ocurrido un error al mover las reseñas del usuario " + usuario.getNombre() + " a eliminadas: " + e.getMessage());
+            throw new RuntimeException("Ha ocurrido un error al mover las reseñas del usuario " + usuario.getNombre()
+                    + " a eliminadas: " + e.getMessage());
         } finally {
+            if (em.getTransaction().isActive()) {
+                em.getTransaction().rollback();
+            }
             em.close();
         }
     }
 
     private boolean comprobarIntegridad(EntityManager em, Reseña reseña, String mensaje) {
-        Usuario usu = em.find(Usuario.class, reseña.getIdUsuario());
-        Videojuego vj = em.find(Videojuego.class, reseña.getIdVideojuego());
+        Usuario usu = em.find(Usuario.class, reseña.getIdUsuario().getIdUsuario());
+        Videojuego vj = em.find(Videojuego.class, reseña.getIdVideojuego().getIdVideojuego());
         // si alguno es null, se lanza una excepcion
         if (vj == null || usu == null) {
             if (vj == null && usu == null) {
@@ -284,4 +300,5 @@ public class ReseñaController {
         }
         return true;
     }
+
 }

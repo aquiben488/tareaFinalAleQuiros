@@ -4,17 +4,26 @@ import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityManager;
 import models.Videojuego;
 import models.Categoria;
+import models.Usuario;
 import utils.PersistenceManager;
 import java.util.List;
 
 /**
- * Controlador CRUD para la entidad Videojuego
- * 
- * CONSIDERACIONES ESPECIALES:
- * - Videojuego tiene relación ManyToOne con Categoria
- * - Videojuego tiene relación OneToMany con Reseña
- * - Incluir métodos de búsqueda por categoría y fecha
- */
+* La logica de los metodos es la siguiente:
+*
+* cualquier error en datos de entrada se lanza una excepcion de tipo IllegalArgumentException
+* cualquier error en la base de datos se lanza una excepcion de tipo RuntimeException
+*
+* el entityManager se cierra siempre en el finally
+* para evitar que se quede abierto o se cierre 2 veces
+*
+* en el caso de buscar todos se considera un error de base de datos si no hay elementos
+* ya que no hay datos de entrada que puedan dar error
+*
+* la estrategia para controlar la integridad de los datos en actualizacion
+* no es completamente robusta (habria que hacer varias condiciones y buscar codigo de error
+* concreto) pero por simplicidad solo se busca texto en el mensaje de error
+*/
 public class VideojuegoController {
 
     public void crear(Videojuego videojuego) {
@@ -27,6 +36,8 @@ public class VideojuegoController {
             em.getTransaction().begin();
             em.persist(videojuego);
             em.getTransaction().commit();
+        } catch (IllegalArgumentException e) {
+            throw e;
         } catch (EntityExistsException e) {
             throw new IllegalArgumentException("El videojuego ya existe");
         } catch (Exception e) {
@@ -50,6 +61,8 @@ public class VideojuegoController {
                 return vj;
             }
             throw new IllegalArgumentException("No se ha encontrado videojuego con ese Id");
+        } catch (IllegalArgumentException e) {
+            throw e;
         } catch (Exception e) {
             throw new RuntimeException("Ha ocurrido un error al buscar el videojuego: " + e.getMessage());
         } finally {
@@ -66,6 +79,8 @@ public class VideojuegoController {
                 return list;
             }
             throw new RuntimeException("No existe ningun videojuego");
+        } catch (RuntimeException e) {
+            throw e;
         } catch (Exception e) {
             throw new RuntimeException("Ha ocurrido un error al buscar los videojuegos: " + e.getMessage());
         } finally {
@@ -75,14 +90,16 @@ public class VideojuegoController {
 
     public void actualizar(Videojuego videojuego) {
         EntityManager em = PersistenceManager.getEntityManager();
-        CategoriaController catCon = new CategoriaController();
         try {
-            catCon.buscarPorId(videojuego.getIdCategoria());
+            Categoria cat = em.find(Categoria.class, videojuego.getIdCategoria());
+            if (cat == null) {
+                throw new IllegalArgumentException("La categoria no existe");
+            }
             em.getTransaction().begin();
             em.merge(videojuego);
             em.getTransaction().commit();
         } catch (IllegalArgumentException e) {
-            throw new IllegalArgumentException("La categoria no existe");
+            throw e;
         } catch (Exception e) {
             throw new RuntimeException("Ha ocurrido un error al actualizar el videojuego: " + e.getMessage());
         } finally {
@@ -103,6 +120,8 @@ public class VideojuegoController {
             em.getTransaction().begin();
             em.remove(vj);
             em.getTransaction().commit();
+        } catch (IllegalArgumentException e) {
+            throw e;
         } catch (Exception e) {
             em.getTransaction().rollback();
             throw new RuntimeException("No se ha podido eliminar el videojuego");
@@ -115,8 +134,10 @@ public class VideojuegoController {
         EntityManager em = PersistenceManager.getEntityManager();
 
         try {
-            CategoriaController catCon = new CategoriaController();
-            catCon.buscarPorId(categoria.getIdCategoria());
+            Categoria cat = em.find(Categoria.class, categoria.getIdCategoria());
+            if (cat == null) {
+                throw new IllegalArgumentException("La categoria no existe");
+            }
             List<Videojuego> list = em
                     .createQuery("SELECT v FROM Videojuego v WHERE v.categoria.idCategoria = :idCategoria")
                     .setParameter("idCategoria", categoria.getIdCategoria())
@@ -125,8 +146,8 @@ public class VideojuegoController {
                 return list;
             }
             throw new RuntimeException("No existe ningun videojuego");
-        } catch (IllegalArgumentException e) {
-            throw new IllegalArgumentException("La categoria no existe");
+        } catch (RuntimeException e) {
+            throw e;
         } catch (Exception e) {
             throw new RuntimeException("Ha ocurrido un error al buscar los videojuegos: " + e.getMessage());
         } finally {
@@ -144,6 +165,8 @@ public class VideojuegoController {
                 return list;
             }
             throw new RuntimeException("No existe ningun videojuego");
+        } catch (RuntimeException e) {
+            throw e;
         } catch (Exception e) {
             throw new RuntimeException("Ha ocurrido un error al buscar los videojuegos: " + e.getMessage());
         } finally {
@@ -155,13 +178,15 @@ public class VideojuegoController {
     public List<Videojuego> buscarPorAño(int año) {
         EntityManager em = PersistenceManager.getEntityManager();
         try {
-            List<Videojuego> list = em.createQuery("SELECT v FROM Videojuego v WHERE YEAR(v.fechaLanzamiento) = :año")
-                    .setParameter("año", año)
+            List<Videojuego> list = em.createQuery("SELECT v FROM Videojuego v WHERE EXTRACT(YEAR FROM v.fechaLanzamiento) = :anyo", Videojuego.class)
+                    .setParameter("anyo", año)
                     .getResultList();
             if (!list.isEmpty()) {
                 return list;
             }
             throw new RuntimeException("No existe ningun videojuego");
+        } catch (RuntimeException e) {
+            throw e;
         } catch (Exception e) {
             throw new RuntimeException("Ha ocurrido un error al buscar los videojuegos: " + e.getMessage());
         } finally {
