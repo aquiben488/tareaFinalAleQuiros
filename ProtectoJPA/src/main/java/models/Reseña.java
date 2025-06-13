@@ -18,10 +18,7 @@ import jakarta.persistence.NamedQuery;
 import jakarta.persistence.Table;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
-import java.math.BigDecimal;
 import java.time.LocalDate;
-import models.Usuario;
-import models.Videojuego;
 
 /**
  *
@@ -36,7 +33,12 @@ import models.Videojuego;
     @NamedQuery(name = "Reseña.findByPuntuacion", query = "SELECT r FROM Reseña r WHERE r.puntuacion = :puntuacion"),
     @NamedQuery(name = "Reseña.findByFechaReseña", query = "SELECT r FROM Reseña r WHERE r.fechaReseña = :fechaReseña"),
     @NamedQuery(name = "Reseña.findByUtiles", query = "SELECT r FROM Reseña r WHERE r.utiles = :utiles"),
-    @NamedQuery(name = "Reseña.findBySpoilers", query = "SELECT r FROM Reseña r WHERE r.spoilers = :spoilers")})
+    @NamedQuery(name = "Reseña.findBySpoilers", query = "SELECT r FROM Reseña r WHERE r.spoilers = :spoilers"),
+    @NamedQuery(name = "Reseña.findByUsuario", query = "SELECT r FROM Reseña r WHERE r.usuario = :usuario"),
+    @NamedQuery(name = "Reseña.findByVideojuego", query = "SELECT r FROM Reseña r WHERE r.videojuego = :videojuego"),
+    @NamedQuery(name = "Reseña.findByUsuarioVideojuego", query = "SELECT r FROM Reseña r WHERE r.usuario = :usuario AND r.videojuego = :videojuego"),
+    @NamedQuery(name = "Reseña.findByPuntuacionMinima", query = "SELECT r FROM Reseña r WHERE r.puntuacion >= :puntuacionMinima")
+})
 public class Reseña implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -45,7 +47,6 @@ public class Reseña implements Serializable {
     @Basic(optional = false)
     @Column(name = "idResena")
     private Integer idReseña;
-    // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
     @Basic(optional = false)
     @Column(name = "puntuacion")
     private Double puntuacion;

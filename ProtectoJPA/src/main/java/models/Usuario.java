@@ -55,7 +55,7 @@ public class Usuario implements Serializable {
     @Column(name = "email")
     private String email;
     @Basic(optional = false)
-    @Column(name = "contrasena")
+    @Column(name = "contraseña")
     private String contraseña;
     @Column(name = "fechaRegistro")
     @Temporal(TemporalType.DATE)
