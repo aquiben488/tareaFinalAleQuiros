@@ -46,7 +46,7 @@ public class CategoriaController {
     public List<Categoria> buscarTodas() {
         EntityManager em = PersistenceManager.getEntityManager();
         try {
-            List<Categoria> list = em.createNamedQuery("Categoria.findAll").getResultList();
+            List<Categoria> list = em.createNamedQuery("Categoria.findAll", Categoria.class).getResultList();
             if (!list.isEmpty()) {
                 return list;
             }
