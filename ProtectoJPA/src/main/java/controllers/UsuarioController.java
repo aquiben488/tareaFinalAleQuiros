@@ -1,5 +1,6 @@
 package controllers;
 
+import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.NoResultException;
 import jakarta.persistence.TypedQuery;
@@ -10,36 +11,23 @@ import java.util.List;
 public class UsuarioController {
 
     public void crear(Usuario usuario) {
-        // TODO: Hay que revisar esto luego por que es horrible
         EntityManager em = PersistenceManager.getEntityManager();
-        boolean existe; // boolean para comprobar si el email ya existe
-        try {
-            Usuario usu = em.createNamedQuery("Usuario.findByEmail", Usuario.class)
-                    .setParameter("email", usuario.getEmail())
-                    .getSingleResult();
-            existe = true; // si no lanza excepcion, el email ya existe
-        } catch (NoResultException e) {
-            // si lanza esta excepcion, el email no existe, por lo que se puede crear el
-            // usuario
-            existe = false;
-        } catch (Exception e) {
-            // cualquier otra excepcion es un error de la base de datos
-            em.close();
-            throw new IllegalArgumentException("Ha ocurrido un error al crear el usuario");
-        }
-        // si el email ya existe, se lanza una excepcion
-        if (existe) {
-            em.close();
-            throw new IllegalArgumentException("El email ya esta registrado en la base de datos");
-        }
         try {
             em.getTransaction().begin();
             em.persist(usuario);
             em.getTransaction().commit();
+        } catch (EntityExistsException e) {
+            throw new IllegalArgumentException("El usuario ya existe");
         } catch (Exception e) {
-            em.getTransaction().rollback();
-            throw new IllegalArgumentException("No se ha podido crear el usuario");
+            if (e.getMessage() != null && e.getMessage().contains("El usuario ya existe")) {
+                throw new IllegalArgumentException("El usuario ya existe");
+            }
+            
+            throw new RuntimeException("No se ha podido crear el usuario");
         } finally {
+            if (em.getTransaction().isActive()) {
+                em.getTransaction().rollback();
+            }
             em.close();
         }
     }
@@ -81,16 +69,15 @@ public class UsuarioController {
             if (usu == null || usu.getIdUsuario() == 1) {
                 throw new IllegalArgumentException("No se ha encontrado usuario con ese Id");
             }
-            
             em.getTransaction().begin();
             em.merge(usuario);
             em.getTransaction().commit();
         } catch (Exception e) {
+            throw new RuntimeException("Error al actualizar usuario: " + e.getMessage());
+        } finally {
             if (em.getTransaction().isActive()) {
                 em.getTransaction().rollback();
             }
-            throw new RuntimeException("Error al actualizar usuario: " + e.getMessage());
-        } finally {
             em.close();
         }
     }
