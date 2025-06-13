@@ -2,7 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package daw;
+package models;
 
 import jakarta.persistence.Basic;
 import jakarta.persistence.CascadeType;
@@ -31,13 +31,16 @@ import java.util.Date;
 @Table(name = "usuarios")
 @XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "Usuarios.findAll", query = "SELECT u FROM Usuarios u"),
-    @NamedQuery(name = "Usuarios.findByIdUsuario", query = "SELECT u FROM Usuarios u WHERE u.idUsuario = :idUsuario"),
-    @NamedQuery(name = "Usuarios.findByNombre", query = "SELECT u FROM Usuarios u WHERE u.nombre = :nombre"),
-    @NamedQuery(name = "Usuarios.findByEmail", query = "SELECT u FROM Usuarios u WHERE u.email = :email"),
-    @NamedQuery(name = "Usuarios.findByContrasena", query = "SELECT u FROM Usuarios u WHERE u.contrasena = :contrasena"),
-    @NamedQuery(name = "Usuarios.findByFechaRegistro", query = "SELECT u FROM Usuarios u WHERE u.fechaRegistro = :fechaRegistro")})
-public class Usuarios implements Serializable {
+    @NamedQuery(name = "Usuario.findAll", query = "SELECT u FROM Usuario u"),
+    @NamedQuery(name = "Usuario.findByIdUsuario", query = "SELECT u FROM Usuario u WHERE u.idUsuario = :idUsuario"),
+    @NamedQuery(name = "Usuario.findByNombre", query = "SELECT u FROM Usuario u WHERE u.nombre = :nombre"),
+    @NamedQuery(name = "Usuario.findByEmail", query = "SELECT u FROM Usuario u WHERE u.email = :email"),
+    @NamedQuery(name = "Usuario.findByContraseña", query = "SELECT u FROM Usuario u WHERE u.contraseña = :contraseña"),
+    @NamedQuery(name = "Usuario.findByFechaRegistro", query = "SELECT u FROM Usuario u WHERE u.fechaRegistro = :fechaRegistro"),
+    @NamedQuery(name = "Usuario.findContraseñaByEmail", query = "SELECT u.contraseña FROM Usuario u WHERE u.email = :email"),
+    @NamedQuery(name = "Usuario.findIdUsuarioByNombre", query = "SELECT u.idUsuario FROM Usuario u WHERE u.nombre = :nombre")
+})
+public class Usuario implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
@@ -57,17 +60,17 @@ public class Usuarios implements Serializable {
     @Column(name = "fechaRegistro")
     @Temporal(TemporalType.DATE)
     private Date fechaRegistro;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "idUsuario")
-    private Collection<Reseñas> reseñasCollection;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "usuario")
+    private Collection<Reseña> reseñasCollection;
 
-    public Usuarios() {
+    public Usuario() {
     }
 
-    public Usuarios(Integer idUsuario) {
+    public Usuario(Integer idUsuario) {
         this.idUsuario = idUsuario;
     }
 
-    public Usuarios(Integer idUsuario, String nombre, String email, String contraseña) {
+    public Usuario(Integer idUsuario, String nombre, String email, String contraseña) {
         this.idUsuario = idUsuario;
         this.nombre = nombre;
         this.email = email;
@@ -115,11 +118,11 @@ public class Usuarios implements Serializable {
     }
 
     @XmlTransient
-    public Collection<Reseñas> getReseñasCollection() {
+    public Collection<Reseña> getReseñasCollection() {
         return reseñasCollection;
     }
 
-    public void setReseñasCollection(Collection<Reseñas> reseñasCollection) {
+    public void setReseñasCollection(Collection<Reseña> reseñasCollection) {
         this.reseñasCollection = reseñasCollection;
     }
 
@@ -133,10 +136,10 @@ public class Usuarios implements Serializable {
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof Usuarios)) {
+        if (!(object instanceof Usuario)) {
             return false;
         }
-        Usuarios other = (Usuarios) object;
+        Usuario other = (Usuario) object;
         if ((this.idUsuario == null && other.idUsuario != null) || (this.idUsuario != null && !this.idUsuario.equals(other.idUsuario))) {
             return false;
         }

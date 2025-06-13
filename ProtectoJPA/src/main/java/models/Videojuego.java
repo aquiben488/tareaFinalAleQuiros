@@ -2,7 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package daw;
+package models;
 
 import jakarta.persistence.Basic;
 import jakarta.persistence.CascadeType;
@@ -25,6 +25,7 @@ import jakarta.xml.bind.annotation.XmlTransient;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.Date;
+import models.Categoria;
 
 /**
  *
@@ -34,11 +35,11 @@ import java.util.Date;
 @Table(name = "videojuegos")
 @XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "Videojuegos.findAll", query = "SELECT v FROM Videojuegos v"),
-    @NamedQuery(name = "Videojuegos.findByIdVideojuego", query = "SELECT v FROM Videojuegos v WHERE v.idVideojuego = :idVideojuego"),
-    @NamedQuery(name = "Videojuegos.findByTitulo", query = "SELECT v FROM Videojuegos v WHERE v.titulo = :titulo"),
-    @NamedQuery(name = "Videojuegos.findByFechaLanzamiento", query = "SELECT v FROM Videojuegos v WHERE v.fechaLanzamiento = :fechaLanzamiento")})
-public class Videojuegos implements Serializable {
+    @NamedQuery(name = "Videojuego.findAll", query = "SELECT v FROM Videojuego v"),
+    @NamedQuery(name = "Videojuego.findByIdVideojuego", query = "SELECT v FROM Videojuego v WHERE v.idVideojuego = :idVideojuego"),
+    @NamedQuery(name = "Videojuego.findByTitulo", query = "SELECT v FROM Videojuego v WHERE v.titulo = :titulo"),
+    @NamedQuery(name = "Videojuego.findByFechaLanzamiento", query = "SELECT v FROM Videojuego v WHERE v.fechaLanzamiento = :fechaLanzamiento")})
+public class Videojuego implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
@@ -55,20 +56,20 @@ public class Videojuegos implements Serializable {
     @Column(name = "fechaLanzamiento")
     @Temporal(TemporalType.DATE)
     private Date fechaLanzamiento;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "idVideojuego")
-    private Collection<Reseñas> reseñasCollection;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "videojuego")
+    private Collection<Reseña> reseñasCollection;
     @JoinColumn(name = "idCategoria", referencedColumnName = "idCategoria")
     @ManyToOne(optional = false)
-    private Categorias idCategoria;
+    private Categoria categoria;
 
-    public Videojuegos() {
+    public Videojuego() {
     }
 
-    public Videojuegos(Integer idVideojuego) {
+    public Videojuego(Integer idVideojuego) {
         this.idVideojuego = idVideojuego;
     }
 
-    public Videojuegos(Integer idVideojuego, String titulo) {
+    public Videojuego(Integer idVideojuego, String titulo) {
         this.idVideojuego = idVideojuego;
         this.titulo = titulo;
     }
@@ -106,20 +107,35 @@ public class Videojuegos implements Serializable {
     }
 
     @XmlTransient
-    public Collection<Reseñas> getReseñasCollection() {
+    public Collection<Reseña> getReseñasCollection() {
         return reseñasCollection;
     }
 
-    public void setReseñasCollection(Collection<Reseñas> reseñasCollection) {
+    public void setReseñasCollection(Collection<Reseña> reseñasCollection) {
         this.reseñasCollection = reseñasCollection;
     }
 
-    public Categorias getIdCategoria() {
-        return idCategoria;
+    /**
+     * Nueva relación ManyToOne con la entidad Categoria.
+     */
+    public Categoria getCategoria() {
+        return categoria;
     }
 
-    public void setIdCategoria(Categorias idCategoria) {
-        this.idCategoria = idCategoria;
+    public void setCategoria(Categoria categoria) {
+        this.categoria = categoria;
+    }
+
+    /**
+     * Métodos de compatibilidad para el código existente que aún usa getIdCategoria().
+     * Permite compilar mientras se refactoriza el resto de la aplicación.
+     */
+    public Integer getIdCategoria() {
+        return categoria != null ? categoria.getIdCategoria() : null;
+    }
+
+    public void setIdCategoria(Integer idCategoria) {
+        this.categoria = idCategoria != null ? new Categoria(idCategoria) : null;
     }
 
     @Override
@@ -132,10 +148,10 @@ public class Videojuegos implements Serializable {
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof Videojuegos)) {
+        if (!(object instanceof Videojuego)) {
             return false;
         }
-        Videojuegos other = (Videojuegos) object;
+        Videojuego other = (Videojuego) object;
         if ((this.idVideojuego == null && other.idVideojuego != null) || (this.idVideojuego != null && !this.idVideojuego.equals(other.idVideojuego))) {
             return false;
         }

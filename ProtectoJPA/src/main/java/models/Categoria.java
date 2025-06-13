@@ -2,7 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package daw;
+package models;
 
 import jakarta.persistence.Basic;
 import jakarta.persistence.CascadeType;
@@ -28,10 +28,10 @@ import java.util.Collection;
 @Table(name = "categorias")
 @XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "Categorias.findAll", query = "SELECT c FROM Categorias c"),
-    @NamedQuery(name = "Categorias.findByIdCategoria", query = "SELECT c FROM Categorias c WHERE c.idCategoria = :idCategoria"),
-    @NamedQuery(name = "Categorias.findByNombre", query = "SELECT c FROM Categorias c WHERE c.nombre = :nombre")})
-public class Categorias implements Serializable {
+    @NamedQuery(name = "Categoria.findAll", query = "SELECT c FROM Categoria c"),
+    @NamedQuery(name = "Categoria.findByIdCategoria", query = "SELECT c FROM Categoria c WHERE c.idCategoria = :idCategoria"),
+    @NamedQuery(name = "Categoria.findByNombre", query = "SELECT c FROM Categoria c WHERE c.nombre = :nombre")})
+public class Categoria implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
@@ -42,17 +42,17 @@ public class Categorias implements Serializable {
     @Basic(optional = false)
     @Column(name = "nombre")
     private String nombre;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "idCategoria")
-    private Collection<Videojuegos> videojuegosCollection;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "categoria")
+    private Collection<Videojuego> videojuegosCollection;
 
-    public Categorias() {
+    public Categoria() {
     }
 
-    public Categorias(Integer idCategoria) {
+    public Categoria(Integer idCategoria) {
         this.idCategoria = idCategoria;
     }
 
-    public Categorias(Integer idCategoria, String nombre) {
+    public Categoria(Integer idCategoria, String nombre) {
         this.idCategoria = idCategoria;
         this.nombre = nombre;
     }
@@ -74,11 +74,11 @@ public class Categorias implements Serializable {
     }
 
     @XmlTransient
-    public Collection<Videojuegos> getVideojuegosCollection() {
+    public Collection<Videojuego> getVideojuegosCollection() {
         return videojuegosCollection;
     }
 
-    public void setVideojuegosCollection(Collection<Videojuegos> videojuegosCollection) {
+    public void setVideojuegosCollection(Collection<Videojuego> videojuegosCollection) {
         this.videojuegosCollection = videojuegosCollection;
     }
 
@@ -92,10 +92,10 @@ public class Categorias implements Serializable {
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof Categorias)) {
+        if (!(object instanceof Categoria)) {
             return false;
         }
-        Categorias other = (Categorias) object;
+        Categoria other = (Categoria) object;
         if ((this.idCategoria == null && other.idCategoria != null) || (this.idCategoria != null && !this.idCategoria.equals(other.idCategoria))) {
             return false;
         }

@@ -2,7 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package daw;
+package models;
 
 import jakarta.persistence.Basic;
 import jakarta.persistence.Column;
@@ -16,12 +16,12 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.NamedQueries;
 import jakarta.persistence.NamedQuery;
 import jakarta.persistence.Table;
-import jakarta.persistence.Temporal;
-import jakarta.persistence.TemporalType;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.util.Date;
+import java.time.LocalDate;
+import models.Usuario;
+import models.Videojuego;
 
 /**
  *
@@ -31,13 +31,13 @@ import java.util.Date;
 @Table(name = "resenas") // antes reseñas pero la ñ da problemas
 @XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "Resenas.findAll", query = "SELECT r FROM Resenas r"),
-    @NamedQuery(name = "Resenas.findByIdResena", query = "SELECT r FROM Resenas r WHERE r.idResena = :idResena"),
-    @NamedQuery(name = "Resenas.findByPuntuacion", query = "SELECT r FROM Resenas r WHERE r.puntuacion = :puntuacion"),
-    @NamedQuery(name = "Resenas.findByFechaResena", query = "SELECT r FROM Resenas r WHERE r.fechaResena = :fechaResena"),
-    @NamedQuery(name = "Resenas.findByUtiles", query = "SELECT r FROM Resenas r WHERE r.utiles = :utiles"),
-    @NamedQuery(name = "Resenas.findBySpoilers", query = "SELECT r FROM Resenas r WHERE r.spoilers = :spoilers")})
-public class Reseñas implements Serializable {
+    @NamedQuery(name = "Reseña.findAll", query = "SELECT r FROM Reseña r"),
+    @NamedQuery(name = "Reseña.findByIdReseña", query = "SELECT r FROM Reseña r WHERE r.idReseña = :idReseña"),
+    @NamedQuery(name = "Reseña.findByPuntuacion", query = "SELECT r FROM Reseña r WHERE r.puntuacion = :puntuacion"),
+    @NamedQuery(name = "Reseña.findByFechaReseña", query = "SELECT r FROM Reseña r WHERE r.fechaReseña = :fechaReseña"),
+    @NamedQuery(name = "Reseña.findByUtiles", query = "SELECT r FROM Reseña r WHERE r.utiles = :utiles"),
+    @NamedQuery(name = "Reseña.findBySpoilers", query = "SELECT r FROM Reseña r WHERE r.spoilers = :spoilers")})
+public class Reseña implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
@@ -48,32 +48,31 @@ public class Reseñas implements Serializable {
     // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
     @Basic(optional = false)
     @Column(name = "puntuacion")
-    private BigDecimal puntuacion;
+    private Double puntuacion;
     @Lob
     @Column(name = "comentario")
     private String comentario;
     @Column(name = "fechaResena")
-    @Temporal(TemporalType.DATE)
-    private Date fechaReseña;
+    private LocalDate fechaReseña;
     @Column(name = "utiles")
     private Integer utiles;
     @Column(name = "spoilers")
     private Boolean spoilers;
     @JoinColumn(name = "idUsuario", referencedColumnName = "idUsuario")
     @ManyToOne(optional = false)
-    private Usuarios idUsuario;
+    private Usuario usuario;
     @JoinColumn(name = "idVideojuego", referencedColumnName = "idVideojuego")
     @ManyToOne(optional = false)
-    private Videojuegos idVideojuego;
+    private Videojuego videojuego;
 
-    public Reseñas() {
+    public Reseña() {
     }
 
-    public Reseñas(Integer idReseña) {
+    public Reseña(Integer idReseña) {
         this.idReseña = idReseña;
     }
 
-    public Reseñas(Integer idReseña, BigDecimal puntuacion) {
+    public Reseña(Integer idReseña, Double puntuacion) {
         this.idReseña = idReseña;
         this.puntuacion = puntuacion;
     }
@@ -86,11 +85,11 @@ public class Reseñas implements Serializable {
         this.idReseña = idReseña;
     }
 
-    public BigDecimal getPuntuacion() {
+    public Double getPuntuacion() {
         return puntuacion;
     }
 
-    public void setPuntuacion(BigDecimal puntuacion) {
+    public void setPuntuacion(Double puntuacion) {
         this.puntuacion = puntuacion;
     }
 
@@ -102,11 +101,11 @@ public class Reseñas implements Serializable {
         this.comentario = comentario;
     }
 
-    public Date getFechaReseña() {
+    public LocalDate getFechaReseña() {
         return fechaReseña;
     }
 
-    public void setFechaReseña(Date fechaReseña) {
+    public void setFechaReseña(LocalDate fechaReseña) {
         this.fechaReseña = fechaReseña;
     }
 
@@ -126,20 +125,41 @@ public class Reseñas implements Serializable {
         this.spoilers = spoilers;
     }
 
-    public Usuarios getIdUsuario() {
-        return idUsuario;
+    public Usuario getUsuario() {
+        return usuario;
     }
 
-    public void setIdUsuario(Usuarios idUsuario) {
-        this.idUsuario = idUsuario;
+    public void setUsuario(Usuario usuario) {
+        this.usuario = usuario;
     }
 
-    public Videojuegos getIdVideojuego() {
-        return idVideojuego;
+    public Videojuego getVideojuego() {
+        return videojuego;
     }
 
-    public void setIdVideojuego(Videojuegos idVideojuego) {
-        this.idVideojuego = idVideojuego;
+    public void setVideojuego(Videojuego videojuego) {
+        this.videojuego = videojuego;
+    }
+
+    /**
+     * Métodos de compatibilidad para que el código que aún usa getIdUsuario()/getIdVideojuego()
+     * siga compilando. Devuelven la ENTIDAD asociada, tal y como esperan actualmente
+     * los controladores.
+     */
+    public Usuario getIdUsuario() {
+        return usuario;
+    }
+
+    public void setIdUsuario(Usuario usuario) {
+        this.usuario = usuario;
+    }
+
+    public Videojuego getIdVideojuego() {
+        return videojuego;
+    }
+
+    public void setIdVideojuego(Videojuego videojuego) {
+        this.videojuego = videojuego;
     }
 
     @Override
@@ -152,10 +172,10 @@ public class Reseñas implements Serializable {
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof Reseñas)) {
+        if (!(object instanceof Reseña)) {
             return false;
         }
-        Reseñas other = (Reseñas) object;
+        Reseña other = (Reseña) object;
         if ((this.idReseña == null && other.idReseña != null) || (this.idReseña != null && !this.idReseña.equals(other.idReseña))) {
             return false;
         }
