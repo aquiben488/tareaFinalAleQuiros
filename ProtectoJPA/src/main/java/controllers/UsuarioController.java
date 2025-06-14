@@ -1,11 +1,12 @@
 package controllers;
 
+import java.util.List;
+
 import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.NoResultException;
 import models.Usuario;
 import utils.PersistenceManager;
-import java.util.List;
 
 public class UsuarioController {
 
@@ -152,15 +153,20 @@ public class UsuarioController {
         }
     }
 
-    public boolean validarLogin(String email, String contraseña) {
+    public Usuario validarLogin(String email, String contraseña) {
         EntityManager em = PersistenceManager.getEntityManager();
         try {
             String contraseñaReal = em.createNamedQuery("Usuario.findContraseñaByEmail", String.class)
                     .setParameter("email", email)
                     .getSingleResult();
-            return contraseña.equals(contraseñaReal);
+            if (contraseña.equals(contraseñaReal)) {
+                return buscarPorEmail(email);
+            }
+            throw new IllegalArgumentException("La contraseña es incorrecta");
         } catch (NoResultException e) {
             throw new IllegalArgumentException("El email no esta registrado en la base de datos");
+        } catch (IllegalArgumentException e) {
+            throw e;
         } catch (Exception e) {
             throw new RuntimeException("Ha ocurrido un error al buscar el usuario: " + e.getMessage());
         } finally {
