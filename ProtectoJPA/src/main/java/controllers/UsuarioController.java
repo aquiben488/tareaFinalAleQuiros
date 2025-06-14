@@ -167,4 +167,111 @@ public class UsuarioController {
             em.close();
         }
     }
+    
+    // Metodos para la interfaz grafica
+ 
+    public int getContadorReseñasEscritas(Integer idUsuario) {
+        EntityManager em = PersistenceManager.getEntityManager();
+        try {
+            // Verificar que el usuario existe
+            Usuario user = em.find(Usuario.class, idUsuario);
+            if (user == null) {
+                throw new IllegalArgumentException("No se ha encontrado usuario con ese Id");
+            }
+            
+            // Contar reseñas del usuario
+            Long count = em.createQuery("SELECT COUNT(r) FROM Reseña r WHERE r.usuario.idUsuario = :idUsuario", Long.class)
+                    .setParameter("idUsuario", idUsuario)
+                    .getSingleResult();
+            
+            return count.intValue();
+            
+        } catch (IllegalArgumentException e) {
+            throw e;
+        } catch (NoResultException e) {
+            return 0;
+        } catch (Exception e) {
+            throw new RuntimeException("Error al obtener contador de reseñas: " + e.getMessage());
+        } finally {
+            em.close();
+        }
+    }
+    
+    public double getPromedioCalificacionesDadas(Integer idUsuario) {
+        EntityManager em = PersistenceManager.getEntityManager();
+        try {
+            // Verificar que el usuario existe
+            Usuario user = em.find(Usuario.class, idUsuario);
+            if (user == null) {
+                throw new IllegalArgumentException("No se ha encontrado usuario con ese Id");
+            }
+            
+            // Calcular promedio de puntuaciones que da el usuario
+            Double promedio = em.createQuery("SELECT AVG(r.puntuacion) FROM Reseña r WHERE r.usuario.idUsuario = :idUsuario", Double.class)
+                    .setParameter("idUsuario", idUsuario)
+                    .getSingleResult();
+            
+            // Si no ha escrito reseñas, AVG devuelve null
+            return promedio != null ? Math.round(promedio * 100.0) / 100.0 : 0.0;
+            
+        } catch (IllegalArgumentException e) {
+            throw e;
+        } catch (NoResultException e) {
+            return 0.0;
+        } catch (Exception e) {
+            throw new RuntimeException("Error al obtener promedio de calificaciones: " + e.getMessage());
+        } finally {
+            em.close();
+        }
+    }
+    
+    public int getTotalUpvotesRecibidos(Integer idUsuario) {
+        EntityManager em = PersistenceManager.getEntityManager();
+        try {
+            // Verificar que el usuario existe
+            Usuario user = em.find(Usuario.class, idUsuario);
+            if (user == null) {
+                throw new IllegalArgumentException("No se ha encontrado usuario con ese Id");
+            }
+            
+            // Sumar todos los upvotes de las reseñas del usuario
+            Integer totalUpvotes = em.createQuery("SELECT SUM(r.utiles) FROM Reseña r WHERE r.usuario.idUsuario = :idUsuario", Integer.class)
+                    .setParameter("idUsuario", idUsuario)
+                    .getSingleResult();
+            
+            return totalUpvotes != null ? totalUpvotes : 0;
+            
+        } catch (IllegalArgumentException e) {
+            throw e;
+        } catch (NoResultException e) {
+            return 0;
+        } catch (Exception e) {
+            throw new RuntimeException("Error al obtener total de upvotes: " + e.getMessage());
+        } finally {
+            em.close();
+        }
+    }
+
+    public String getEstadisticasUsuario(Integer idUsuario) {
+        try {
+            int totalReseñas = getContadorReseñasEscritas(idUsuario);
+            double promedioCalificaciones = getPromedioCalificacionesDadas(idUsuario);
+            int totalUpvotes = getTotalUpvotesRecibidos(idUsuario);
+            
+            if (totalReseñas == 0) {
+                return "Sin reseñas escritas";
+            }
+            
+            return String.format("📝 %d reseña%s | ⭐ Promedio: %.1f | 👍 %d útil%s", 
+                    totalReseñas,
+                    totalReseñas == 1 ? "" : "s",
+                    promedioCalificaciones,
+                    totalUpvotes,
+                    totalUpvotes == 1 ? "" : "es");
+                    
+        } catch (Exception e) {
+            return "Error al cargar estadísticas";
+        }
+    }
+    
 }

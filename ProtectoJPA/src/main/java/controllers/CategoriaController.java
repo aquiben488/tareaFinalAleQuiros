@@ -137,4 +137,42 @@ public class CategoriaController {
             em.close();
         }
     }
+    
+    // Metodos para la interfaz grafica
+
+    public String getEstadisticasCategoria(Integer idCategoria) {
+        EntityManager em = PersistenceManager.getEntityManager();
+        try {
+            // Verificar que la categoría existe
+            Categoria cat = em.find(Categoria.class, idCategoria);
+            if (cat == null) {
+                throw new IllegalArgumentException("La categoria no existe");
+            }
+            
+            // Contar videojuegos en la categoría
+            Integer totalJuegos = em.createQuery("SELECT COUNT(v) FROM Videojuego v WHERE v.idCategoria = :idCategoria", Integer.class)
+                    .setParameter("idCategoria", idCategoria)
+                    .getSingleResult();
+            
+            // Contar reseñas total de la categoría
+            Integer totalReseñas = em.createQuery("SELECT COUNT(r) FROM Reseña r WHERE r.videojuego.idCategoria = :idCategoria", Integer.class)
+                    .setParameter("idCategoria", idCategoria)
+                    .getSingleResult();
+            
+            return String.format("🎮 %d juego%s | 📝 %d reseña%s",
+                    totalJuegos,
+                    totalJuegos == 1 ? "" : "s",
+                    totalReseñas,
+                    totalReseñas == 1 ? "" : "s");
+                    
+        } catch (IllegalArgumentException e) {
+            throw e;
+        } catch (NoResultException e) {
+            return "Sin videojuegos";
+        } catch (Exception e) {
+            throw new RuntimeException("Error al obtener estadísticas de categoría: " + e.getMessage());
+        } finally {
+            em.close();
+        }
+    }
 }

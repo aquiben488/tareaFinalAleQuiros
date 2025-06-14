@@ -2,6 +2,7 @@ package controllers;
 
 import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.NoResultException;
 import models.Videojuego;
 import models.Categoria;
 import models.Usuario;
@@ -193,4 +194,81 @@ public class VideojuegoController {
             em.close();
         }
     }
+    
+    // Metodos para la interfaz grafica
+    
+    public int getContadorReseñas(Integer idVideojuego) {
+        EntityManager em = PersistenceManager.getEntityManager();
+        try {
+            // Verificar que el videojuego existe
+            Videojuego vj = em.find(Videojuego.class, idVideojuego);
+            if (vj == null) {
+                throw new IllegalArgumentException("No se ha encontrado videojuego con ese Id");
+            }
+            
+            Integer count = em.createQuery("SELECT COUNT(r) FROM Reseña r WHERE r.videojuego.idVideojuego = :idVideojuego", Integer.class)
+                    .setParameter("idVideojuego", idVideojuego)
+                    .getSingleResult();
+            
+            return count;
+            
+        } catch (IllegalArgumentException e) {
+            throw e;
+        } catch (NoResultException e) {
+            return 0;
+        }
+        catch (Exception e) {
+            throw new RuntimeException("Error al obtener contador de reseñas: " + e.getMessage());
+        } finally {
+            em.close();
+        }
+    }
+    
+    public double getNotaMedia(Integer idVideojuego) {
+        EntityManager em = PersistenceManager.getEntityManager();
+        try {
+            Videojuego vj = em.find(Videojuego.class, idVideojuego);
+            if (vj == null) {
+                throw new IllegalArgumentException("No se ha encontrado videojuego con ese Id");
+            }
+            
+            // Calcular media de puntuaciones
+            Double media = em.createQuery("SELECT AVG(r.puntuacion) FROM Reseña r WHERE r.videojuego.idVideojuego = :idVideojuego", Double.class)
+                    .setParameter("idVideojuego", idVideojuego)
+                    .getSingleResult();
+            
+            // Si no hay reseñas, AVG devuelve null
+            return media != null ? Math.round(media * 100.0) / 100.0 : 0.0;
+            
+        } catch (IllegalArgumentException e) {
+            throw e;
+        } catch (NoResultException e) {
+            return 0.0;
+        } catch (Exception e) {
+            throw new RuntimeException("Error al obtener nota media: " + e.getMessage());
+        } finally {
+            em.close();
+        }
+    }
+
+    public String getEstadisticasTexto(Integer idVideojuego) {
+        try {
+            int totalReseñas = getContadorReseñas(idVideojuego);
+            double notaMedia = getNotaMedia(idVideojuego);
+            
+            if (totalReseñas == 0) {
+                return "Sin reseñas";
+            }
+            
+            // esto es idea completa de claude
+            return String.format("⭐ %.1f/10 | 📝 %d reseña%s",
+                    notaMedia,
+                    totalReseñas,
+                    totalReseñas == 1 ? "" : "s");
+                    
+        } catch (Exception e) {
+            return "Error al cargar estadísticas";
+        }
+    }
+    
 }
