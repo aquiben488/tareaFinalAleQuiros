@@ -9,7 +9,6 @@ import models.Usuario;
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JDialog.java to edit this template
  */
-
 /**
  *
  * @author ale
@@ -17,6 +16,7 @@ import models.Usuario;
 public class LoginDialolog extends javax.swing.JDialog {
 
     private Usuario usuarioLogueado;
+
     /**
      * Creates new form LoginDialolog
      */
@@ -60,6 +60,11 @@ public class LoginDialolog extends javax.swing.JDialog {
         txtEmail.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtEmailActionPerformed(evt);
+            }
+        });
+        txtEmail.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                txtEmailKeyPressed(evt);
             }
         });
 
@@ -140,11 +145,28 @@ public class LoginDialolog extends javax.swing.JDialog {
     }// </editor-fold>//GEN-END:initComponents
 
     private void txtEmailActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtEmailActionPerformed
-        // TODO add your handling code here:
+        if (txtEmail.getText().isEmpty()) {
+            txtErrores.setText("introduce tu email");
+            this.jScrollPane1.setVisible(true);
+            pack();
+            return;
+        }
+        txtPass.requestFocus();
+        this.jScrollPane1.setVisible(false);
+        pack();
     }//GEN-LAST:event_txtEmailActionPerformed
 
     private void txtPassActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtPassActionPerformed
-        // TODO add your handling code here:
+        if (txtPass.getPassword().length == 0) {
+            txtPass.setText("");
+            txtErrores.setText("introduce tu contraseña");
+            this.jScrollPane1.setVisible(true);
+            pack();
+            return;
+        }
+        this.jScrollPane1.setVisible(false);
+        pack();
+        btnLoginActionPerformed(evt);
     }//GEN-LAST:event_txtPassActionPerformed
 
     private void btnLoginActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLoginActionPerformed
@@ -188,6 +210,10 @@ public class LoginDialolog extends javax.swing.JDialog {
         this.txtPass.requestFocus();
     }//GEN-LAST:event_lblContraseñaMouseClicked
 
+    private void txtEmailKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtEmailKeyPressed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtEmailKeyPressed
+
     /**
      * @param args the command line arguments
      */
@@ -229,7 +255,6 @@ public class LoginDialolog extends javax.swing.JDialog {
             }
         });
 
-        
     }
 
     public Usuario getUsuarioLogueado() {
