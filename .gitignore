@@ -22,3 +22,10 @@
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
 replay_pid*
+ProtectoJPA/target/generated-sources/annotations/models/Videojuego_.java
+*.form
+/ProtectoJPA/target
+ProtectoJPA/target/classes/views/MainFrame.form
+ProtectoJPA/src/main/java/views/MainFrame.form
+ProtectoJPA/src/main/java/views/LoginDialolog.form
+ProtectoJPA/src/main/java/views/JuegosTab.form

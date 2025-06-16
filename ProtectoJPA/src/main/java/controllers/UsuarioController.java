@@ -185,12 +185,12 @@ public class UsuarioController {
                 throw new IllegalArgumentException("No se ha encontrado usuario con ese Id");
             }
             
-            // Contar reseñas del usuario
-            Integer count = em.createQuery("SELECT COUNT(r) FROM Reseña r WHERE r.usuario.idUsuario = :idUsuario", Integer.class)
+            // Contar reseñas del usuario (COUNT devuelve Long)
+            Long countLong = em.createQuery("SELECT COUNT(r) FROM Reseña r WHERE r.usuario.idUsuario = :idUsuario", Long.class)
                     .setParameter("idUsuario", idUsuario)
                     .getSingleResult();
             
-            return count;
+            return countLong.intValue();
             
         } catch (IllegalArgumentException e) {
             throw e;
@@ -240,12 +240,12 @@ public class UsuarioController {
                 throw new IllegalArgumentException("No se ha encontrado usuario con ese Id");
             }
             
-            // Sumar todos los upvotes de las reseñas del usuario
-            Integer totalUpvotes = em.createQuery("SELECT SUM(r.utiles) FROM Reseña r WHERE r.usuario.idUsuario = :idUsuario", Integer.class)
+            // Sumar todos los upvotes de las reseñas del usuario (SUM devuelve Long)
+            Long totalUpvotesLong = em.createQuery("SELECT SUM(r.utiles) FROM Reseña r WHERE r.usuario.idUsuario = :idUsuario", Long.class)
                     .setParameter("idUsuario", idUsuario)
                     .getSingleResult();
             
-            return totalUpvotes != null ? totalUpvotes : 0;
+            return totalUpvotesLong != null ? totalUpvotesLong.intValue() : 0;
             
         } catch (IllegalArgumentException e) {
             throw e;

@@ -206,11 +206,11 @@ public class VideojuegoController {
                 throw new IllegalArgumentException("No se ha encontrado videojuego con ese Id");
             }
             
-            Long count = em.createQuery("SELECT COUNT(r) FROM Reseña r WHERE r.videojuego.idVideojuego = :idVideojuego",    Long.class)
+            Long countLong = em.createQuery("SELECT COUNT(r) FROM Reseña r WHERE r.videojuego.idVideojuego = :idVideojuego", Long.class)
                     .setParameter("idVideojuego", idVideojuego)
                     .getSingleResult();
             
-            return count.intValue();
+            return countLong.intValue();
             
         } catch (IllegalArgumentException e) {
             throw e;

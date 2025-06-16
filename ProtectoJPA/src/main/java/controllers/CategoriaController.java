@@ -1,11 +1,13 @@
 package controllers;
 
+import java.util.List;
+
 import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.NoResultException;
 import models.Categoria;
 import utils.PersistenceManager;
-import java.util.List;
+
 
 public class CategoriaController {
     /**
@@ -149,15 +151,19 @@ public class CategoriaController {
                 throw new IllegalArgumentException("La categoria no existe");
             }
             
-            // Contar videojuegos en la categoría
-            Integer totalJuegos = em.createQuery("SELECT COUNT(v) FROM Videojuego v WHERE v.idCategoria = :idCategoria", Integer.class)
+            // Contar videojuegos en la categoría (COUNT devuelve Long)
+            Long totalJuegosLong = em.createQuery("SELECT COUNT(v) FROM Videojuego v WHERE v.categoria.idCategoria = :idCategoria", Long.class)
                     .setParameter("idCategoria", idCategoria)
                     .getSingleResult();
             
-            // Contar reseñas total de la categoría
-            Integer totalReseñas = em.createQuery("SELECT COUNT(r) FROM Reseña r WHERE r.videojuego.idCategoria = :idCategoria", Integer.class)
+            // Contar reseñas total de la categoría (COUNT devuelve Long)
+            Long totalReseñasLong = em.createQuery("SELECT COUNT(r) FROM Reseña r WHERE r.videojuego.categoria.idCategoria = :idCategoria", Long.class)
                     .setParameter("idCategoria", idCategoria)
                     .getSingleResult();
+            
+            // Convertir a int para el formato
+            int totalJuegos = totalJuegosLong.intValue();
+            int totalReseñas = totalReseñasLong.intValue();
             
             return String.format("🎮 %d juego%s | 📝 %d reseña%s",
                     totalJuegos,
