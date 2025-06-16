@@ -4,6 +4,16 @@
  */
 package views;
 
+import javax.swing.ButtonGroup;
+import javax.swing.DefaultListModel;
+
+import controllers.CategoriaController;
+import controllers.VideojuegoController;
+
+import java.util.Comparator;
+import java.util.List;
+import models.Videojuego;
+
 /**
  *
  * @author ale
@@ -32,13 +42,38 @@ public class JuegosTab extends javax.swing.JPanel {
      */
     
     private MainFrame parent;
+    private boolean modoAdmin = false;
+    private VideojuegoController videojuegoController;
     
     /**
      * Creates new form VideojuegosTab
      */
     public JuegosTab() {
         initComponents();
+        videojuegoController = new VideojuegoController();
+
+        // Configurar ButtonGroups para RadioButtons
+        // Grupo 1: Opciones de búsqueda (solo una seleccionable)
+        ButtonGroup grupoBuscar = new ButtonGroup();
+        grupoBuscar.add(rBtnBuscTitulo);
+        grupoBuscar.add(rBtnBuscCategoria);
+        grupoBuscar.add(rBtnBuscFecha);
         
+        // Grupo 2: Opciones de ordenamiento (solo una seleccionable)
+        ButtonGroup grupoOrden = new ButtonGroup();
+        grupoOrden.add(rBtnOrdenTitulo);
+        grupoOrden.add(rBtnOrdenCategoria);
+        grupoOrden.add(rBtnOrdenFecha);
+        
+        // Crear grupo 3 para Asc/Desc (solo uno seleccionable)
+        ButtonGroup grupoAscDesc = new ButtonGroup();
+        grupoAscDesc.add(rBtnAscendente);
+        grupoAscDesc.add(rBtnDescendente);
+        
+        // Seleccionar opciones por defecto
+        rBtnBuscTitulo.setSelected(true);    // Buscar por título por defecto
+        rBtnOrdenTitulo.setSelected(true);   // Ordenar por título por defecto
+        rBtnAscendente.setSelected(true);    // Orden ascendente por defecto
     }
     
     /**
@@ -47,13 +82,19 @@ public class JuegosTab extends javax.swing.JPanel {
     public JuegosTab(MainFrame parent) {
         this();
         this.parent = parent;
+        this.modoAdmin = parent.isModoAdmin();
+        this.btnCRUDEditar.setVisible(modoAdmin);
+        this.btnCRUDEliminar.setVisible(modoAdmin);
+        MostrarTodosLosJuegos();
     }
     
     /**
-     * Filtrar videojuegos por categoría específica
+     * Actualiza el estado del modo administrador
      */
-    public void filtrarPorCategoria(models.Categoria categoria) {
-        // TODO: Implementar filtrado por categoría
+    public void actualizarModoAdmin(boolean modoAdmin) {
+        this.modoAdmin = modoAdmin;
+        this.btnCRUDEditar.setVisible(modoAdmin);
+        this.btnCRUDEliminar.setVisible(modoAdmin);
     }
 
     /**
@@ -65,30 +106,338 @@ public class JuegosTab extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jScrollPane1 = new javax.swing.JScrollPane();
+        AreaListaJuegos = new javax.swing.JList<>();
+        BtnReset = new javax.swing.JButton();
+        BarraBusqueda = new javax.swing.JTextField();
+        BtnBuscar = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
+        rBtnBuscTitulo = new javax.swing.JRadioButton();
+        rBtnBuscCategoria = new javax.swing.JRadioButton();
+        rBtnBuscFecha = new javax.swing.JRadioButton();
+        jLabel2 = new javax.swing.JLabel();
+        rBtnOrdenTitulo = new javax.swing.JRadioButton();
+        rBtnOrdenCategoria = new javax.swing.JRadioButton();
+        rBtnOrdenFecha = new javax.swing.JRadioButton();
+        rBtnAscendente = new javax.swing.JRadioButton();
+        rBtnDescendente = new javax.swing.JRadioButton();
+        btnCRUDEditar = new javax.swing.JButton();
+        btnCRUDEliminar = new javax.swing.JButton();
 
-        jLabel1.setText("Buenos dias");
+        AreaListaJuegos.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                AreaListaJuegosMouseClicked(evt);
+            }
+        });
+        jScrollPane1.setViewportView(AreaListaJuegos);
+
+        BtnReset.setText("Reset");
+        BtnReset.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                BtnResetActionPerformed(evt);
+            }
+        });
+
+        BarraBusqueda.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                BarraBusquedaActionPerformed(evt);
+            }
+        });
+
+        BtnBuscar.setText("Buscar");
+        BtnBuscar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                BtnBuscarActionPerformed(evt);
+            }
+        });
+
+        jLabel1.setText("Buscar por :");
+
+        rBtnBuscTitulo.setText("Titulo");
+
+        rBtnBuscCategoria.setText("Categoria");
+
+        rBtnBuscFecha.setText("Año lanzamiento");
+
+        jLabel2.setText("Ordenar por :");
+
+        rBtnOrdenTitulo.setText("Titulo");
+
+        rBtnOrdenCategoria.setText("Categoria");
+
+        rBtnOrdenFecha.setText("Año lanzamiento");
+
+        rBtnAscendente.setText("Asc");
+
+        rBtnDescendente.setText("Desc");
+
+        btnCRUDEditar.setText("Editar");
+        btnCRUDEditar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCRUDEditarActionPerformed(evt);
+            }
+        });
+
+        btnCRUDEliminar.setText("Eliminar");
+        btnCRUDEliminar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCRUDEliminarActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(166, Short.MAX_VALUE)
-                .addComponent(jLabel1)
-                .addGap(160, 160, 160))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jScrollPane1)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel1)
+                            .addComponent(rBtnBuscTitulo)
+                            .addComponent(rBtnBuscCategoria)
+                            .addComponent(rBtnBuscFecha)
+                            .addComponent(jLabel2)
+                            .addComponent(rBtnOrdenTitulo)
+                            .addComponent(rBtnOrdenCategoria)
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                .addGroup(layout.createSequentialGroup()
+                                    .addComponent(rBtnAscendente)
+                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(rBtnDescendente))
+                                .addComponent(rBtnOrdenFecha, javax.swing.GroupLayout.Alignment.LEADING)))
+                        .addGap(6, 6, 6))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(18, 18, 18)
+                        .addComponent(BtnReset)
+                        .addGap(18, 18, 18)
+                        .addComponent(BarraBusqueda, javax.swing.GroupLayout.PREFERRED_SIZE, 250, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(BtnBuscar)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 31, Short.MAX_VALUE)
+                        .addComponent(btnCRUDEditar, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btnCRUDEliminar)))
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(74, 74, 74)
-                .addComponent(jLabel1)
-                .addContainerGap(209, Short.MAX_VALUE))
+                .addGap(18, 18, 18)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(BtnReset)
+                    .addComponent(BarraBusqueda, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(BtnBuscar)
+                    .addComponent(btnCRUDEditar)
+                    .addComponent(btnCRUDEliminar))
+                .addGap(18, 18, 18)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 306, Short.MAX_VALUE)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jLabel1)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(rBtnBuscTitulo)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(rBtnBuscCategoria)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(rBtnBuscFecha)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jLabel2)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(rBtnOrdenTitulo)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(rBtnOrdenCategoria)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(rBtnOrdenFecha)
+                        .addGap(18, 18, 18)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(rBtnAscendente)
+                            .addComponent(rBtnDescendente))
+                        .addGap(0, 0, Short.MAX_VALUE))))
         );
     }// </editor-fold>//GEN-END:initComponents
 
+    private void BtnResetActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BtnResetActionPerformed
+        // Seleccionar opciones por defecto
+        rBtnBuscTitulo.setSelected(true);
+        rBtnOrdenTitulo.setSelected(true);
+        rBtnAscendente.setSelected(true);
+        MostrarTodosLosJuegos();
+    }//GEN-LAST:event_BtnResetActionPerformed
+
+    private void BtnBuscarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BtnBuscarActionPerformed
+        if (BarraBusqueda.getText().isEmpty()) {
+            MostrarTodosLosJuegos();
+        }
+        if (rBtnBuscTitulo.isSelected()) {
+            FiltrarPorTitulo(BarraBusqueda.getText());
+        }
+        if (rBtnBuscCategoria.isSelected()) {
+            FiltrarPorCategoria(BarraBusqueda.getText());
+        }
+        if (rBtnBuscFecha.isSelected()) {
+            try {
+                FiltrarPorFecha(Integer.parseInt(BarraBusqueda.getText()));
+            } catch (NumberFormatException e) {
+                MostrarError("El año de lanzamiento debe ser un número entero");
+            }
+        }
+    }//GEN-LAST:event_BtnBuscarActionPerformed
+
+    private void BarraBusquedaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BarraBusquedaActionPerformed
+        BtnBuscarActionPerformed(evt);
+    }//GEN-LAST:event_BarraBusquedaActionPerformed
+
+    private void AreaListaJuegosMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_AreaListaJuegosMouseClicked
+        if (evt.getClickCount() == 2) { // Doble clic
+            Videojuego videojuego = AreaListaJuegos.getSelectedValue();
+            if (videojuego != null) {
+                parent.irAReseñasDeJuego(videojuego);
+            }
+        }
+    }//GEN-LAST:event_AreaListaJuegosMouseClicked
+
+    private void btnCRUDEditarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCRUDEditarActionPerformed
+        Videojuego videojuego = AreaListaJuegos.getSelectedValue();
+        if (videojuego != null) {
+            // TODO: Implementar la funcionalidad de editar un videojuego
+            //parent.irAEditarJuego(videojuego);
+        }
+    }//GEN-LAST:event_btnCRUDEditarActionPerformed
+
+    private void btnCRUDEliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCRUDEliminarActionPerformed
+        Videojuego videojuego = AreaListaJuegos.getSelectedValue();
+        if (videojuego != null) {
+            // TODO Implementar popUp de confirmacion
+            try {
+                videojuegoController.eliminar(videojuego.getIdVideojuego());
+                MostrarTodosLosJuegos(); // Recargar lista tras eliminación exitosa
+            } catch (IllegalArgumentException e) {
+                MostrarError("Error: " + e.getMessage() + ". Inténtelo de nuevo.");
+            } catch (RuntimeException e) {
+                MostrarError("Error del sistema. No se pudo eliminar el videojuego.");
+            }
+        }
+    }//GEN-LAST:event_btnCRUDEliminarActionPerformed
+
+    /**
+     * Filtrar videojuegos por categoría específica (Cuando haces doble click en una categoria
+     *  en categoriasTab)
+     */
+    public void MostrarJuegosPorCategoria(models.Categoria categoria) {
+        FiltrarPorCategoria(categoria.getNombre());
+    }
+
+    public void FiltrarPorTitulo(String titulo) {
+        List<Videojuego> videojuegos = null;
+        try {
+            videojuegos = videojuegoController.buscarPorTitulo(titulo);
+            videojuegos.sort(getComparator());
+            MostrarJuegos(videojuegos);
+        } catch (Exception e) {
+            MostrarError("Ha ocurrido un error al buscar los videojuegos: " + e.getMessage());
+        }
+    }
+
+    public void FiltrarPorCategoria(String categoria) {
+        List<Videojuego> videojuegos = null;
+        try {
+            CategoriaController categoriaController = new CategoriaController();
+            videojuegos = videojuegoController.buscarPorCategoria(categoriaController.buscarPorNombre(categoria));
+            videojuegos.sort(getComparator());
+            MostrarJuegos(videojuegos);
+        } catch (Exception e) {
+            MostrarError(e.getMessage());
+        }
+    }
+
+    public void FiltrarPorFecha(int fecha) {
+        List<Videojuego> videojuegos = null;
+        try {
+            videojuegos = videojuegoController.buscarPorAño(fecha);
+            videojuegos.sort(getComparator());
+            MostrarJuegos(videojuegos);
+        } catch (Exception e) {
+            MostrarError(e.getMessage());
+        }
+    }
+
+    public void MostrarTodosLosJuegos() {
+        List<Videojuego> videojuegos = null;
+        try {
+            videojuegos = videojuegoController.buscarTodos();
+            videojuegos.sort(getComparator());
+            MostrarJuegos(videojuegos);
+        } catch (Exception e) {
+            MostrarError(e.getMessage());
+        }
+    }
+
+    /**
+     * Muestra los videojuegos en la lista
+     * toda la responsabilidad de mostrar los videojuegos en la lista
+     * es de este metodo
+     */
+    public void MostrarJuegos(List<Videojuego> videojuegos) {
+        DefaultListModel<Videojuego> modeloLista = new DefaultListModel<>();
+        for (Videojuego videojuego : videojuegos) {
+            modeloLista.addElement(videojuego);
+        }
+        AreaListaJuegos.setModel(modeloLista);
+    }
+
+    public void MostrarError(String mensaje) {
+        DefaultListModel<Videojuego> modeloLista = new DefaultListModel<>();
+        // Crear un videojuego temporal con el mensaje de error
+        modeloLista.addElement(new Videojuego(){
+            @Override
+            public String toString() {
+                return mensaje;
+            }
+        });
+        AreaListaJuegos.setModel(modeloLista);
+    }
+
+    /**
+     * Obtiene el comparador de videojuegos
+     * segun el radio button seleccionado
+     * y el orden ascendente o descendente
+     */
+    public Comparator<Videojuego> getComparator() {
+        Comparator<Videojuego> comparator = (Videojuego v1, Videojuego v2) -> {
+            if (rBtnOrdenTitulo.isSelected()) {
+                return v1.getTitulo().compareTo(v2.getTitulo());
+            } else if (rBtnOrdenCategoria.isSelected()) {
+                return v1.getCategoria().getNombre().compareTo(v2.getCategoria().getNombre());
+            } else if (rBtnOrdenFecha.isSelected()) {
+                return v1.getFechaLanzamiento().compareTo(v2.getFechaLanzamiento());
+            } else {
+                return 0;
+            }
+        };
+        return (rBtnAscendente.isSelected()) ? comparator : comparator.reversed();
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JList<Videojuego> AreaListaJuegos;
+    private javax.swing.JTextField BarraBusqueda;
+    private javax.swing.JButton BtnBuscar;
+    private javax.swing.JButton BtnReset;
+    private javax.swing.JButton btnCRUDEditar;
+    private javax.swing.JButton btnCRUDEliminar;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JRadioButton rBtnAscendente;
+    private javax.swing.JRadioButton rBtnBuscCategoria;
+    private javax.swing.JRadioButton rBtnBuscFecha;
+    private javax.swing.JRadioButton rBtnBuscTitulo;
+    private javax.swing.JRadioButton rBtnDescendente;
+    private javax.swing.JRadioButton rBtnOrdenCategoria;
+    private javax.swing.JRadioButton rBtnOrdenFecha;
+    private javax.swing.JRadioButton rBtnOrdenTitulo;
     // End of variables declaration//GEN-END:variables
+
 }
