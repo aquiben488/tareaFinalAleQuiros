@@ -4,6 +4,10 @@
  */
 package models;
 
+import java.io.Serializable;
+import java.util.Collection;
+import java.util.Date;
+
 import jakarta.persistence.Basic;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -22,10 +26,6 @@ import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlTransient;
-import java.io.Serializable;
-import java.util.Collection;
-import java.util.Date;
-import models.Categoria;
 
 /**
  *
@@ -160,7 +160,13 @@ public class Videojuego implements Serializable {
 
     @Override
     public String toString() {
-        return "daw.Videojuegos[ idVideojuego=" + idVideojuego + " ]";
+        try {
+            controllers.VideojuegoController controller = new controllers.VideojuegoController();
+            return controller.getEstadisticasTexto(this.idVideojuego);
+        } catch (Exception e) {
+            // Fallback si hay error
+            return this.titulo + " | " + (categoria != null ? categoria.getNombre() : "Sin categoría");
+        }
     }
     
 }
