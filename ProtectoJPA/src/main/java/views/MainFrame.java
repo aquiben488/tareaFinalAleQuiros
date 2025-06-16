@@ -93,7 +93,7 @@ public class MainFrame extends javax.swing.JFrame {
     }
     
     public void irAJuegosDeCategoria(models.Categoria categoria) {
-        juegosTab.filtrarPorCategoria(categoria);
+        juegosTab.MostrarJuegosPorCategoria(categoria);
         tabPadre.setSelectedComponent(tabJuegos);
     }
     
@@ -101,6 +101,20 @@ public class MainFrame extends javax.swing.JFrame {
     public void setModoAdmin(boolean modoAdmin) {
         this.modoAdmin = modoAdmin;
         actualizarVisibilidadCrud();
+        
+        // Actualizar modo admin en todas las pestañas
+        if (categoriasTab != null) {
+            categoriasTab.actualizarModoAdmin(modoAdmin);
+        }
+        if (juegosTab != null) {
+            juegosTab.actualizarModoAdmin(modoAdmin);
+        }
+        if (usuariosTab != null) {
+            usuariosTab.actualizarModoAdmin(modoAdmin);
+        }
+        if (reseñasTab != null) {
+            reseñasTab.actualizarModoAdmin(modoAdmin);
+        }
     }
     
     public void setMostrarSpoilers(boolean mostrarSpoilers) {
@@ -146,38 +160,25 @@ public class MainFrame extends javax.swing.JFrame {
     private void initComponents() {
 
         tabPadre = new javax.swing.JTabbedPane();
-        tabBuscar = new javax.swing.JPanel();
         tabCategorias = new javax.swing.JPanel();
         tabJuegos = new javax.swing.JPanel();
         tabUsuarios = new javax.swing.JPanel();
         tabReseñas = new javax.swing.JPanel();
         tabCrud = new javax.swing.JPanel();
         tabAjustes = new javax.swing.JPanel();
+        tabBuscar = new javax.swing.JPanel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-
-        javax.swing.GroupLayout tabBuscarLayout = new javax.swing.GroupLayout(tabBuscar);
-        tabBuscar.setLayout(tabBuscarLayout);
-        tabBuscarLayout.setHorizontalGroup(
-            tabBuscarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 531, Short.MAX_VALUE)
-        );
-        tabBuscarLayout.setVerticalGroup(
-            tabBuscarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 265, Short.MAX_VALUE)
-        );
-
-        tabPadre.addTab("Publicar", tabBuscar);
 
         javax.swing.GroupLayout tabCategoriasLayout = new javax.swing.GroupLayout(tabCategorias);
         tabCategorias.setLayout(tabCategoriasLayout);
         tabCategoriasLayout.setHorizontalGroup(
             tabCategoriasLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 531, Short.MAX_VALUE)
+            .addGap(0, 700, Short.MAX_VALUE)
         );
         tabCategoriasLayout.setVerticalGroup(
             tabCategoriasLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 265, Short.MAX_VALUE)
+            .addGap(0, 365, Short.MAX_VALUE)
         );
 
         tabPadre.addTab("Categorias", tabCategorias);
@@ -186,11 +187,11 @@ public class MainFrame extends javax.swing.JFrame {
         tabJuegos.setLayout(tabJuegosLayout);
         tabJuegosLayout.setHorizontalGroup(
             tabJuegosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 531, Short.MAX_VALUE)
+            .addGap(0, 700, Short.MAX_VALUE)
         );
         tabJuegosLayout.setVerticalGroup(
             tabJuegosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 265, Short.MAX_VALUE)
+            .addGap(0, 365, Short.MAX_VALUE)
         );
 
         tabPadre.addTab("Juegos", tabJuegos);
@@ -199,11 +200,11 @@ public class MainFrame extends javax.swing.JFrame {
         tabUsuarios.setLayout(tabUsuariosLayout);
         tabUsuariosLayout.setHorizontalGroup(
             tabUsuariosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 531, Short.MAX_VALUE)
+            .addGap(0, 700, Short.MAX_VALUE)
         );
         tabUsuariosLayout.setVerticalGroup(
             tabUsuariosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 265, Short.MAX_VALUE)
+            .addGap(0, 365, Short.MAX_VALUE)
         );
 
         tabPadre.addTab("Usuarios", tabUsuarios);
@@ -212,11 +213,11 @@ public class MainFrame extends javax.swing.JFrame {
         tabReseñas.setLayout(tabReseñasLayout);
         tabReseñasLayout.setHorizontalGroup(
             tabReseñasLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 531, Short.MAX_VALUE)
+            .addGap(0, 700, Short.MAX_VALUE)
         );
         tabReseñasLayout.setVerticalGroup(
             tabReseñasLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 265, Short.MAX_VALUE)
+            .addGap(0, 365, Short.MAX_VALUE)
         );
 
         tabPadre.addTab("Reseñas", tabReseñas);
@@ -225,11 +226,11 @@ public class MainFrame extends javax.swing.JFrame {
         tabCrud.setLayout(tabCrudLayout);
         tabCrudLayout.setHorizontalGroup(
             tabCrudLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 531, Short.MAX_VALUE)
+            .addGap(0, 700, Short.MAX_VALUE)
         );
         tabCrudLayout.setVerticalGroup(
             tabCrudLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 265, Short.MAX_VALUE)
+            .addGap(0, 365, Short.MAX_VALUE)
         );
 
         tabPadre.addTab("Crud", tabCrud);
@@ -238,23 +239,33 @@ public class MainFrame extends javax.swing.JFrame {
         tabAjustes.setLayout(tabAjustesLayout);
         tabAjustesLayout.setHorizontalGroup(
             tabAjustesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 531, Short.MAX_VALUE)
+            .addGap(0, 700, Short.MAX_VALUE)
         );
         tabAjustesLayout.setVerticalGroup(
             tabAjustesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 265, Short.MAX_VALUE)
+            .addGap(0, 365, Short.MAX_VALUE)
         );
 
         tabPadre.addTab("Ajustes", tabAjustes);
+
+        javax.swing.GroupLayout tabBuscarLayout = new javax.swing.GroupLayout(tabBuscar);
+        tabBuscar.setLayout(tabBuscarLayout);
+        tabBuscarLayout.setHorizontalGroup(
+            tabBuscarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 700, Short.MAX_VALUE)
+        );
+        tabBuscarLayout.setVerticalGroup(
+            tabBuscarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 365, Short.MAX_VALUE)
+        );
+
+        tabPadre.addTab("Publicar", tabBuscar);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(tabPadre)
-                .addGap(14, 14, 14))
+            .addComponent(tabPadre, javax.swing.GroupLayout.DEFAULT_SIZE, 700, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)

@@ -121,6 +121,7 @@ public class PopUpAjustes extends javax.swing.JDialog {
         MainFrame mainFrame = (MainFrame) this.getParent();
         mainFrame.setMostrarSpoilers(rBtnSpoilers.isSelected());
         mainFrame.setModoAdmin(rBtnModoAdmin.isSelected());
+        
         this.dispose();
     }//GEN-LAST:event_btnEnviarActionPerformed
 

@@ -27,6 +27,7 @@ public class CategoriasTab extends javax.swing.JPanel {
      */
     
     private MainFrame parent;
+    private boolean modoAdmin = false;
     
     /**
      * Creates new form CategoriasTab
@@ -41,6 +42,15 @@ public class CategoriasTab extends javax.swing.JPanel {
     public CategoriasTab(MainFrame parent) {
         this();
         this.parent = parent;
+        this.modoAdmin = parent.isModoAdmin();
+    }
+    
+    /**
+     * Actualiza el estado del modo administrador
+     */
+    public void actualizarModoAdmin(boolean modoAdmin) {
+        this.modoAdmin = modoAdmin;
+        // TODO: agregar la lógica para mostrar/ocultar botones
     }
 
     /**
