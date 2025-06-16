@@ -186,11 +186,11 @@ public class UsuarioController {
             }
             
             // Contar reseñas del usuario
-            Long count = em.createQuery("SELECT COUNT(r) FROM Reseña r WHERE r.usuario.idUsuario = :idUsuario", Long.class)
+            Integer count = em.createQuery("SELECT COUNT(r) FROM Reseña r WHERE r.usuario.idUsuario = :idUsuario", Integer.class)
                     .setParameter("idUsuario", idUsuario)
                     .getSingleResult();
             
-            return count.intValue();
+            return count;
             
         } catch (IllegalArgumentException e) {
             throw e;

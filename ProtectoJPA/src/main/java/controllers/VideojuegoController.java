@@ -1,13 +1,13 @@
 package controllers;
 
+import java.util.List;
+
 import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.NoResultException;
-import models.Videojuego;
 import models.Categoria;
-import models.Usuario;
+import models.Videojuego;
 import utils.PersistenceManager;
-import java.util.List;
 
 /**
 * La logica de los metodos es la siguiente:
@@ -206,11 +206,11 @@ public class VideojuegoController {
                 throw new IllegalArgumentException("No se ha encontrado videojuego con ese Id");
             }
             
-            Integer count = em.createQuery("SELECT COUNT(r) FROM Reseña r WHERE r.videojuego.idVideojuego = :idVideojuego", Integer.class)
+            Long count = em.createQuery("SELECT COUNT(r) FROM Reseña r WHERE r.videojuego.idVideojuego = :idVideojuego",    Long.class)
                     .setParameter("idVideojuego", idVideojuego)
                     .getSingleResult();
             
-            return count;
+            return count.intValue();
             
         } catch (IllegalArgumentException e) {
             throw e;
@@ -253,21 +253,41 @@ public class VideojuegoController {
 
     public String getEstadisticasTexto(Integer idVideojuego) {
         try {
+            // Obtener datos del videojuego
+            Videojuego videojuego = buscarPorId(idVideojuego);
             int totalReseñas = getContadorReseñas(idVideojuego);
             double notaMedia = getNotaMedia(idVideojuego);
             
+            // Construir texto con formato atractivo
+            StringBuilder texto = new StringBuilder();
+            
+            // Título
+            texto.append(videojuego.getTitulo());
+            
+            // Categoría y año
+            texto.append(" | ").append(videojuego.getCategoria().getNombre());
+            
+            // Extraer año de la fecha de lanzamiento
+            java.util.Calendar calendar = java.util.Calendar.getInstance();
+            calendar.setTime(videojuego.getFechaLanzamiento());
+            int año = calendar.get(java.util.Calendar.YEAR);
+            texto.append(" | ").append(año);
+            
+            // Estadísticas de reseñas
             if (totalReseñas == 0) {
-                return "Sin reseñas";
+                texto.append(" | Sin reseñas");
+            } else {
+                texto.append(String.format(" | [★] %.1f/10 | %d reseña%s",
+                        notaMedia,
+                        totalReseñas,
+                        totalReseñas == 1 ? "" : "s"));
             }
             
-            // esto es idea completa de claude
-            return String.format("⭐ %.1f/10 | 📝 %d reseña%s",
-                    notaMedia,
-                    totalReseñas,
-                    totalReseñas == 1 ? "" : "s");
+            return texto.toString();
                     
         } catch (Exception e) {
-            return "Error al cargar estadísticas";
+            e.printStackTrace();
+            return "❌ Error: " + e.getMessage();
         }
     }
     

@@ -29,6 +29,7 @@ public class UsuariosTab extends javax.swing.JPanel {
      */
 
     private MainFrame parent;
+    private boolean modoAdmin = false;
 
     /**
      * Creates new form UsuariosTab
@@ -43,6 +44,14 @@ public class UsuariosTab extends javax.swing.JPanel {
     public UsuariosTab(MainFrame parent) {
         this();
         this.parent = parent;
+    }
+    
+    /**
+     * Actualiza el estado del modo administrador
+     */
+    public void actualizarModoAdmin(boolean modoAdmin) {
+        this.modoAdmin = modoAdmin;
+        // TODO: agregar la lógica para mostrar/ocultar botones
     }
 
     /**
