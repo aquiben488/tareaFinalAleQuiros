@@ -191,9 +191,10 @@ public class JuegosTab extends javax.swing.JPanel {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jScrollPane1)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
+                        .addGap(0, 0, 0)
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 482, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel1)
                             .addComponent(rBtnBuscTitulo)
@@ -207,8 +208,7 @@ public class JuegosTab extends javax.swing.JPanel {
                                     .addComponent(rBtnAscendente)
                                     .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                     .addComponent(rBtnDescendente))
-                                .addComponent(rBtnOrdenFecha, javax.swing.GroupLayout.Alignment.LEADING)))
-                        .addGap(6, 6, 6))
+                                .addComponent(rBtnOrdenFecha, javax.swing.GroupLayout.Alignment.LEADING))))
                     .addGroup(layout.createSequentialGroup()
                         .addGap(18, 18, 18)
                         .addComponent(BtnReset)
@@ -216,7 +216,7 @@ public class JuegosTab extends javax.swing.JPanel {
                         .addComponent(BarraBusqueda, javax.swing.GroupLayout.PREFERRED_SIZE, 250, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(BtnBuscar)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 31, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(btnCRUDEditar, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(btnCRUDEliminar)))
@@ -234,7 +234,7 @@ public class JuegosTab extends javax.swing.JPanel {
                     .addComponent(btnCRUDEliminar))
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 306, Short.MAX_VALUE)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 306, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jLabel1)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -254,8 +254,8 @@ public class JuegosTab extends javax.swing.JPanel {
                         .addGap(18, 18, 18)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(rBtnAscendente)
-                            .addComponent(rBtnDescendente))
-                        .addGap(0, 0, Short.MAX_VALUE))))
+                            .addComponent(rBtnDescendente))))
+                .addGap(0, 0, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -327,7 +327,15 @@ public class JuegosTab extends javax.swing.JPanel {
      *  en categoriasTab)
      */
     public void MostrarJuegosPorCategoria(models.Categoria categoria) {
-        FiltrarPorCategoria(categoria.getNombre());
+        List<Videojuego> videojuegos = null;
+        try {
+            // Usar directamente el objeto categoria (más eficiente)
+            videojuegos = videojuegoController.buscarPorCategoria(categoria);
+            videojuegos.sort(getComparator());
+            MostrarJuegos(videojuegos);
+        } catch (Exception e) {
+            MostrarError("Error al cargar videojuegos de la categoría: " + e.getMessage());
+        }
     }
 
     public void FiltrarPorTitulo(String titulo) {
@@ -344,12 +352,30 @@ public class JuegosTab extends javax.swing.JPanel {
     public void FiltrarPorCategoria(String categoria) {
         List<Videojuego> videojuegos = null;
         try {
+            // Para filtros desde la barra de búsqueda, usar búsqueda parcial
             CategoriaController categoriaController = new CategoriaController();
-            videojuegos = videojuegoController.buscarPorCategoria(categoriaController.buscarPorNombre(categoria));
+            List<models.Categoria> categorias = categoriaController.buscarTodas();
+            
+            // Filtrar categorías que contienen el texto buscado (parcial)
+            categorias = categorias.stream()
+                .filter(c -> c.getNombre().toLowerCase().contains(categoria.toLowerCase()))
+                .collect(java.util.stream.Collectors.toList());
+            
+            // Obtener videojuegos de todas las categorías que coinciden
+            videojuegos = new java.util.ArrayList<>();
+            for (models.Categoria cat : categorias) {
+                videojuegos.addAll(videojuegoController.buscarPorCategoria(cat));
+            }
+            
+            // Eliminar duplicados (por si un juego estuviera en múltiples categorías coincidentes)
+            videojuegos = videojuegos.stream()
+                .distinct()
+                .collect(java.util.stream.Collectors.toList());
+            
             videojuegos.sort(getComparator());
             MostrarJuegos(videojuegos);
         } catch (Exception e) {
-            MostrarError(e.getMessage());
+            MostrarError("Error al buscar videojuegos por categoría: " + e.getMessage());
         }
     }
 
