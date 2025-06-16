@@ -4,6 +4,9 @@
  */
 package models;
 
+import java.io.Serializable;
+import java.util.Collection;
+
 import jakarta.persistence.Basic;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -17,8 +20,6 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlTransient;
-import java.io.Serializable;
-import java.util.Collection;
 
 /**
  *
@@ -104,7 +105,14 @@ public class Categoria implements Serializable {
 
     @Override
     public String toString() {
-        return "daw.Categorias[ idCategoria=" + idCategoria + " ]";
+        try {
+            controllers.CategoriaController controller = new controllers.CategoriaController();
+            String estadisticas = controller.getEstadisticasCategoria(this.idCategoria);
+            return this.nombre + " | " + estadisticas;
+        } catch (Exception e) {
+            // Fallback si hay error
+            return this.nombre + " | Sin datos disponibles";
+        }
     }
     
 }

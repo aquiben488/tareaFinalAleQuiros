@@ -4,6 +4,14 @@
  */
 package views;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.swing.ButtonGroup;
+import javax.swing.DefaultListModel;
+
+import controllers.CategoriaController;
+import models.Categoria;
 /**
  *
  * @author ale
@@ -28,6 +36,7 @@ public class CategoriasTab extends javax.swing.JPanel {
     
     private MainFrame parent;
     private boolean modoAdmin = false;
+    private CategoriaController categoriaController;
     
     /**
      * Creates new form CategoriasTab
@@ -43,6 +52,13 @@ public class CategoriasTab extends javax.swing.JPanel {
         this();
         this.parent = parent;
         this.modoAdmin = parent.isModoAdmin();
+        btnCRUDEditar.setVisible(modoAdmin);
+        btnCRUDEliminar.setVisible(modoAdmin);
+        ButtonGroup btnGroup = new ButtonGroup();
+        btnGroup.add(rBtnAscendente);
+        btnGroup.add(rBtnDescendente);
+        this.categoriaController = new CategoriaController();
+        MostrarTodasLasCategorias();
     }
     
     /**
@@ -50,7 +66,8 @@ public class CategoriasTab extends javax.swing.JPanel {
      */
     public void actualizarModoAdmin(boolean modoAdmin) {
         this.modoAdmin = modoAdmin;
-        // TODO: agregar la lógica para mostrar/ocultar botones
+        btnCRUDEditar.setVisible(modoAdmin);
+        btnCRUDEliminar.setVisible(modoAdmin);
     }
 
     /**
@@ -62,19 +79,248 @@ public class CategoriasTab extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jPanel1 = new javax.swing.JPanel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        AreaListaCategorias = new javax.swing.JList<>();
+        BtnReset = new javax.swing.JButton();
+        BarraBusqueda = new javax.swing.JTextField();
+        BtnBuscar = new javax.swing.JButton();
+        rBtnAscendente = new javax.swing.JRadioButton();
+        rBtnDescendente = new javax.swing.JRadioButton();
+        btnCRUDEditar = new javax.swing.JButton();
+        btnCRUDEliminar = new javax.swing.JButton();
+        jLabel1 = new javax.swing.JLabel();
+
+        AreaListaCategorias.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                AreaListaCategoriasMouseClicked(evt);
+            }
+        });
+        jScrollPane1.setViewportView(AreaListaCategorias);
+
+        BtnReset.setText("Reset");
+        BtnReset.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                BtnResetActionPerformed(evt);
+            }
+        });
+
+        BarraBusqueda.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                BarraBusquedaActionPerformed(evt);
+            }
+        });
+
+        BtnBuscar.setText("Buscar");
+        BtnBuscar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                BtnBuscarActionPerformed(evt);
+            }
+        });
+
+        rBtnAscendente.setText("Asc");
+
+        rBtnDescendente.setText("Desc");
+
+        btnCRUDEditar.setText("Editar");
+        btnCRUDEditar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCRUDEditarActionPerformed(evt);
+            }
+        });
+
+        btnCRUDEliminar.setText("Eliminar");
+        btnCRUDEliminar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCRUDEliminarActionPerformed(evt);
+            }
+        });
+
+        jLabel1.setText("Ordenar resultados :");
+
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 482, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addComponent(rBtnAscendente)
+                                .addGap(18, 18, 18)
+                                .addComponent(rBtnDescendente))
+                            .addComponent(jLabel1)))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(18, 18, 18)
+                        .addComponent(BtnReset)
+                        .addGap(18, 18, 18)
+                        .addComponent(BarraBusqueda, javax.swing.GroupLayout.PREFERRED_SIZE, 250, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(BtnBuscar)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 31, Short.MAX_VALUE)
+                        .addComponent(btnCRUDEditar, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btnCRUDEliminar)))
+                .addContainerGap())
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGap(18, 18, 18)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(BtnReset)
+                    .addComponent(BarraBusqueda, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(BtnBuscar)
+                    .addComponent(btnCRUDEditar)
+                    .addComponent(btnCRUDEliminar))
+                .addGap(18, 18, 18)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 306, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(21, 21, 21)
+                        .addComponent(jLabel1)
+                        .addGap(18, 18, 18)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(rBtnAscendente)
+                            .addComponent(rBtnDescendente))))
+                .addGap(0, 0, Short.MAX_VALUE))
+        );
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 400, Short.MAX_VALUE)
+            .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 300, Short.MAX_VALUE)
+            .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
     }// </editor-fold>//GEN-END:initComponents
 
+    private void AreaListaCategoriasMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_AreaListaCategoriasMouseClicked
+        if (evt.getClickCount() == 2) { // Doble clic
+            Categoria categoria = AreaListaCategorias.getSelectedValue();
+            if (categoria != null) {
+                parent.irAJuegosDeCategoria(categoria);
+            }
+        }
+    }//GEN-LAST:event_AreaListaCategoriasMouseClicked
+
+    private void BtnResetActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BtnResetActionPerformed
+        // Seleccionar opciones por defecto
+        rBtnAscendente.setSelected(true);
+        MostrarTodasLasCategorias();
+    }//GEN-LAST:event_BtnResetActionPerformed
+
+    private void BarraBusquedaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BarraBusquedaActionPerformed
+        BtnBuscarActionPerformed(evt);
+    }//GEN-LAST:event_BarraBusquedaActionPerformed
+
+    private void BtnBuscarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BtnBuscarActionPerformed
+        if (BarraBusqueda.getText().isEmpty()) {
+            MostrarTodasLasCategorias();
+        }
+        FiltrarPorNombre(BarraBusqueda.getText());
+    }//GEN-LAST:event_BtnBuscarActionPerformed
+
+    private void btnCRUDEditarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCRUDEditarActionPerformed
+        Categoria categoria = AreaListaCategorias.getSelectedValue();
+        if (categoria != null) {
+            // TODO: Implementar la funcionalidad de editar un videojuego
+            //parent.irAEditarJuego(videojuego);
+        }
+    }//GEN-LAST:event_btnCRUDEditarActionPerformed
+
+    private void btnCRUDEliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCRUDEliminarActionPerformed
+        Categoria categoria = AreaListaCategorias.getSelectedValue();
+        if (categoria != null) {
+            // TODO Implementar popUp de confirmacion
+            try {
+                categoriaController.eliminar(categoria.getIdCategoria());
+                MostrarTodasLasCategorias(); // Recargar lista tras eliminación exitosa
+            } catch (IllegalArgumentException e) {
+                MostrarError("Error: " + e.getMessage() + ". Inténtelo de nuevo.");
+            } catch (RuntimeException e) {
+                MostrarError("Error del sistema. No se pudo eliminar la categoria.");
+            }
+        }
+    }//GEN-LAST:event_btnCRUDEliminarActionPerformed
+
+
+    private void MostrarTodasLasCategorias() {
+        List<Categoria> categorias = null;
+        try {
+            categorias = categoriaController.buscarTodas();
+            categorias.sort(getComparator());
+            MostrarCategorias(categorias);
+        } catch (Exception e) {
+            MostrarError(e.getMessage());
+        }
+    }
+
+    private void FiltrarPorNombre(String nombre) {
+        List<Categoria> categorias = null;
+        try {
+            // Buscar todas las categorías y filtrar por texto contenido
+            categorias = categoriaController.buscarTodas();
+            categorias = categorias.stream()
+                .filter(c -> c.getNombre().toLowerCase().contains(nombre.toLowerCase()))
+                .collect(java.util.stream.Collectors.toList());
+            
+            // Aplicar ordenamiento
+            categorias.sort(getComparator());
+            MostrarCategorias(categorias);
+        } catch (Exception e) {
+            MostrarError(e.getMessage());
+        }
+    }
+
+    public void MostrarCategorias(List<Categoria> categorias) {
+        DefaultListModel<Categoria> modeloLista = new DefaultListModel<>();
+        for (Categoria categoria : categorias) {
+            modeloLista.addElement(categoria);
+        }
+        AreaListaCategorias.setModel(modeloLista);
+    }
+
+    private void MostrarError(String mensaje) {
+        DefaultListModel<Categoria> modeloLista = new DefaultListModel<>();
+        modeloLista.addElement(new Categoria(){
+            @Override
+            public String toString() {
+                return mensaje;
+            }
+        });
+        AreaListaCategorias.setModel(modeloLista);
+    }
+
+    /**
+     * Obtiene el comparador de categorías según el radio button seleccionado
+     * y el orden ascendente o descendente
+     */
+    private java.util.Comparator<Categoria> getComparator() {
+        java.util.Comparator<Categoria> comparator = (c1, c2) -> {
+            return c1.getNombre().compareTo(c2.getNombre());
+        };
+        
+        return (rBtnAscendente.isSelected()) ? comparator : comparator.reversed();
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JList<Categoria> AreaListaCategorias;
+    private javax.swing.JTextField BarraBusqueda;
+    private javax.swing.JButton BtnBuscar;
+    private javax.swing.JButton BtnReset;
+    private javax.swing.JButton btnCRUDEditar;
+    private javax.swing.JButton btnCRUDEliminar;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JPanel jPanel1;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JRadioButton rBtnAscendente;
+    private javax.swing.JRadioButton rBtnDescendente;
     // End of variables declaration//GEN-END:variables
 }
