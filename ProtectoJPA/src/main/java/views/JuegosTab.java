@@ -20,26 +20,6 @@ import models.Videojuego;
  */
 public class JuegosTab extends javax.swing.JPanel {
     
-    /*
-     * TODO - DISEÑO INTERFAZ VIDEOJUEGOS:
-     * - JList o JTable para mostrar videojuegos (título, año, categoría, puntuación promedio)
-     * - Sidebar derecho con filtros:
-     *   * JTextField para filtro por título
-     *   * JComboBox para filtro por categoría
-     *   * JSpinner para filtro por año
-     * - JComboBox de ordenamiento (título, año, puntuación promedio)
-     * - JButton "Buscar" para aplicar filtros
-     * - JButton "Reset (❌)" para mostrar todos los videojuegos
-     * 
-     * TODO - FUNCIONALIDAD:
-     * - Cargar videojuegos con VideojuegoController.buscarTodos()
-     * - Filtrar por título: VideojuegoController.buscarPorTitulo()
-     * - Filtrar por categoría: VideojuegoController.buscarPorCategoria()
-     * - Filtrar por año: VideojuegoController.buscarPorAño()
-     * - Al hacer clic en videojuego: parent.irAReseñasDeJuego(videojuego)
-     * - Implementar filtrarPorCategoria() para navegación desde CategoriasTab
-     * - Ordenamiento local de la lista mostrada
-     */
     
     private MainFrame parent;
     private boolean modoAdmin = false;
@@ -259,6 +239,10 @@ public class JuegosTab extends javax.swing.JPanel {
         );
     }// </editor-fold>//GEN-END:initComponents
 
+    /**
+     * Selecciona las opciones por defecto
+     * y muestra todos los videojuegos
+     */
     private void BtnResetActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BtnResetActionPerformed
         // Seleccionar opciones por defecto
         rBtnBuscTitulo.setSelected(true);
@@ -267,6 +251,11 @@ public class JuegosTab extends javax.swing.JPanel {
         MostrarTodosLosJuegos();
     }//GEN-LAST:event_BtnResetActionPerformed
 
+    /**
+     * Busca los videojuegos por titulo, categoria o fecha
+     * y los muestra en la lista
+     * si esta vacio, muestra todos los videojuegos
+     */
     private void BtnBuscarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BtnBuscarActionPerformed
         if (BarraBusqueda.getText().isEmpty()) {
             MostrarTodosLosJuegos();
@@ -286,10 +275,19 @@ public class JuegosTab extends javax.swing.JPanel {
         }
     }//GEN-LAST:event_BtnBuscarActionPerformed
 
+    /**
+     * Busca los videojuegos por titulo, categoria o fecha
+     * y los muestra en la lista
+     * (hacer enter es igual a hacer click en el boton buscar)
+     */
     private void BarraBusquedaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BarraBusquedaActionPerformed
         BtnBuscarActionPerformed(evt);
     }//GEN-LAST:event_BarraBusquedaActionPerformed
 
+    /**
+     * Muestra las reseñas de un videojuego
+     * cuando se hace doble click en un videojuego
+     */
     private void AreaListaJuegosMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_AreaListaJuegosMouseClicked
         if (evt.getClickCount() == 2) { // Doble clic
             Videojuego videojuego = AreaListaJuegos.getSelectedValue();
@@ -299,6 +297,10 @@ public class JuegosTab extends javax.swing.JPanel {
         }
     }//GEN-LAST:event_AreaListaJuegosMouseClicked
 
+    /**
+     * Edita un videojuego
+     * cuando se hace click en el boton editar
+     */
     private void btnCRUDEditarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCRUDEditarActionPerformed
         Videojuego videojuego = AreaListaJuegos.getSelectedValue();
         if (videojuego != null) {
@@ -307,6 +309,10 @@ public class JuegosTab extends javax.swing.JPanel {
         }
     }//GEN-LAST:event_btnCRUDEditarActionPerformed
 
+    /**
+     * Elimina un videojuego
+     * cuando se hace click en el boton eliminar
+     */
     private void btnCRUDEliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCRUDEliminarActionPerformed
         Videojuego videojuego = AreaListaJuegos.getSelectedValue();
         if (videojuego != null) {
@@ -325,6 +331,7 @@ public class JuegosTab extends javax.swing.JPanel {
     /**
      * Filtrar videojuegos por categoría específica (Cuando haces doble click en una categoria
      *  en categoriasTab)
+     * la busqueda es exacta
      */
     public void MostrarJuegosPorCategoria(models.Categoria categoria) {
         List<Videojuego> videojuegos = null;
@@ -338,6 +345,10 @@ public class JuegosTab extends javax.swing.JPanel {
         }
     }
 
+    /**
+     * Filtrar videojuegos por titulo
+     * la busqueda es parcial
+     */
     public void FiltrarPorTitulo(String titulo) {
         List<Videojuego> videojuegos = null;
         try {
@@ -349,6 +360,10 @@ public class JuegosTab extends javax.swing.JPanel {
         }
     }
 
+    /**
+     * Filtrar videojuegos por categoria
+     * la busqueda es parcial
+     */
     public void FiltrarPorCategoria(String categoria) {
         List<Videojuego> videojuegos = null;
         try {
@@ -379,6 +394,10 @@ public class JuegosTab extends javax.swing.JPanel {
         }
     }
 
+    /**
+     * Filtrar videojuegos por fecha (año de lanzamiento)
+     * la busqueda es exacta
+     */
     public void FiltrarPorFecha(int fecha) {
         List<Videojuego> videojuegos = null;
         try {
@@ -390,6 +409,9 @@ public class JuegosTab extends javax.swing.JPanel {
         }
     }
 
+    /**
+     * Muestra todos los videojuegos
+     */
     public void MostrarTodosLosJuegos() {
         List<Videojuego> videojuegos = null;
         try {
@@ -414,6 +436,12 @@ public class JuegosTab extends javax.swing.JPanel {
         AreaListaJuegos.setModel(modeloLista);
     }
 
+    /**
+     * Muestra un mensaje de error
+     * como la lista es de videojuegos, 
+     * se crea un videojuego temporal con el mensaje de error
+     * (mejor que hacer un JOptionPane)
+     */
     public void MostrarError(String mensaje) {
         DefaultListModel<Videojuego> modeloLista = new DefaultListModel<>();
         // Crear un videojuego temporal con el mensaje de error

@@ -18,21 +18,6 @@ import models.Categoria;
  */
 public class CategoriasTab extends javax.swing.JPanel {
     
-    /*
-     * TODO - DISEÑO INTERFAZ CATEGORÍAS:
-     * - JList o JTable para mostrar categorías (nombre, descripción)
-     * - JTextField para filtro por nombre
-     * - JButton "Buscar" para aplicar filtro
-     * - JButton "Reset (❌)" para mostrar todas las categorías
-     * - Sidebar derecho con filtros siempre visible
-     * 
-     * TODO - FUNCIONALIDAD:
-     * - Cargar categorías con CategoriaController.buscarTodos()
-     * - Filtrar con CategoriaController.buscarPorNombre() al hacer clic "Buscar"
-     * - Al hacer clic en una categoría: parent.irAJuegosDeCategoria(categoria)
-     * - Reset vuelve al estado original (todas las categorías)
-     * - Doble clic en categoría también navega a videojuegos
-     */
     
     private MainFrame parent;
     private boolean modoAdmin = false;
@@ -210,16 +195,29 @@ public class CategoriasTab extends javax.swing.JPanel {
         }
     }//GEN-LAST:event_AreaListaCategoriasMouseClicked
 
+    /**
+     * Selecciona las opciones por defecto
+     * y muestra todas las categorias
+     */
     private void BtnResetActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BtnResetActionPerformed
         // Seleccionar opciones por defecto
         rBtnAscendente.setSelected(true);
         MostrarTodasLasCategorias();
     }//GEN-LAST:event_BtnResetActionPerformed
 
+    /**
+     * Hace click en el boton buscar
+     * (hacer enter es igual a hacer click en el boton buscar)
+     */
     private void BarraBusquedaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BarraBusquedaActionPerformed
         BtnBuscarActionPerformed(evt);
     }//GEN-LAST:event_BarraBusquedaActionPerformed
 
+    /**
+     * Busca las categorias por nombre
+     * la busqueda es parcial
+     * si esta vacio, muestra todas las categorias
+     */
     private void BtnBuscarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BtnBuscarActionPerformed
         if (BarraBusqueda.getText().isEmpty()) {
             MostrarTodasLasCategorias();
@@ -227,14 +225,22 @@ public class CategoriasTab extends javax.swing.JPanel {
         FiltrarPorNombre(BarraBusqueda.getText());
     }//GEN-LAST:event_BtnBuscarActionPerformed
 
+    /**
+     * Edita una categoria
+     * cuando se hace click en el boton editar
+     */
     private void btnCRUDEditarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCRUDEditarActionPerformed
         Categoria categoria = AreaListaCategorias.getSelectedValue();
         if (categoria != null) {
-            // TODO: Implementar la funcionalidad de editar un videojuego
-            //parent.irAEditarJuego(videojuego);
+            // TODO: Implementar la funcionalidad de editar una categoria
+            //parent.irAEditarCategoria(categoria);
         }
     }//GEN-LAST:event_btnCRUDEditarActionPerformed
 
+    /**
+     * Elimina una categoria
+     * cuando se hace click en el boton eliminar
+     */
     private void btnCRUDEliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCRUDEliminarActionPerformed
         Categoria categoria = AreaListaCategorias.getSelectedValue();
         if (categoria != null) {
@@ -251,6 +257,9 @@ public class CategoriasTab extends javax.swing.JPanel {
     }//GEN-LAST:event_btnCRUDEliminarActionPerformed
 
 
+    /**
+     * Muestra todas las categorias
+     */
     private void MostrarTodasLasCategorias() {
         List<Categoria> categorias = null;
         try {
@@ -262,6 +271,10 @@ public class CategoriasTab extends javax.swing.JPanel {
         }
     }
 
+    /**
+     * Filtrar categorias por nombre
+     * la busqueda es parcial
+     */
     private void FiltrarPorNombre(String nombre) {
         List<Categoria> categorias = null;
         try {
@@ -279,6 +292,11 @@ public class CategoriasTab extends javax.swing.JPanel {
         }
     }
 
+    /**
+     * Muestra las categorias en la lista
+     * es el unico metodo con la responsabilidad de mostrar las categorias
+     * en la lista
+     */
     public void MostrarCategorias(List<Categoria> categorias) {
         DefaultListModel<Categoria> modeloLista = new DefaultListModel<>();
         for (Categoria categoria : categorias) {
@@ -287,6 +305,12 @@ public class CategoriasTab extends javax.swing.JPanel {
         AreaListaCategorias.setModel(modeloLista);
     }
 
+    /**
+     * Muestra un mensaje de error
+     * como la lista es de categorias,
+     * se crea una categoria temporal con el mensaje de error
+     * (mejor que hacer un JOptionPane)
+     */
     private void MostrarError(String mensaje) {
         DefaultListModel<Categoria> modeloLista = new DefaultListModel<>();
         modeloLista.addElement(new Categoria(){

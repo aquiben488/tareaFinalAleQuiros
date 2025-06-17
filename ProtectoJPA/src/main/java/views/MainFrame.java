@@ -174,7 +174,7 @@ public class MainFrame extends javax.swing.JFrame {
         tabCategorias.setLayout(tabCategoriasLayout);
         tabCategoriasLayout.setHorizontalGroup(
             tabCategoriasLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 700, Short.MAX_VALUE)
+            .addGap(0, 645, Short.MAX_VALUE)
         );
         tabCategoriasLayout.setVerticalGroup(
             tabCategoriasLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -187,7 +187,7 @@ public class MainFrame extends javax.swing.JFrame {
         tabJuegos.setLayout(tabJuegosLayout);
         tabJuegosLayout.setHorizontalGroup(
             tabJuegosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 700, Short.MAX_VALUE)
+            .addGap(0, 645, Short.MAX_VALUE)
         );
         tabJuegosLayout.setVerticalGroup(
             tabJuegosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -200,7 +200,7 @@ public class MainFrame extends javax.swing.JFrame {
         tabUsuarios.setLayout(tabUsuariosLayout);
         tabUsuariosLayout.setHorizontalGroup(
             tabUsuariosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 700, Short.MAX_VALUE)
+            .addGap(0, 645, Short.MAX_VALUE)
         );
         tabUsuariosLayout.setVerticalGroup(
             tabUsuariosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -213,7 +213,7 @@ public class MainFrame extends javax.swing.JFrame {
         tabReseñas.setLayout(tabReseñasLayout);
         tabReseñasLayout.setHorizontalGroup(
             tabReseñasLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 700, Short.MAX_VALUE)
+            .addGap(0, 645, Short.MAX_VALUE)
         );
         tabReseñasLayout.setVerticalGroup(
             tabReseñasLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -226,7 +226,7 @@ public class MainFrame extends javax.swing.JFrame {
         tabCrud.setLayout(tabCrudLayout);
         tabCrudLayout.setHorizontalGroup(
             tabCrudLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 700, Short.MAX_VALUE)
+            .addGap(0, 645, Short.MAX_VALUE)
         );
         tabCrudLayout.setVerticalGroup(
             tabCrudLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -239,7 +239,7 @@ public class MainFrame extends javax.swing.JFrame {
         tabAjustes.setLayout(tabAjustesLayout);
         tabAjustesLayout.setHorizontalGroup(
             tabAjustesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 700, Short.MAX_VALUE)
+            .addGap(0, 645, Short.MAX_VALUE)
         );
         tabAjustesLayout.setVerticalGroup(
             tabAjustesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -252,7 +252,7 @@ public class MainFrame extends javax.swing.JFrame {
         tabBuscar.setLayout(tabBuscarLayout);
         tabBuscarLayout.setHorizontalGroup(
             tabBuscarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 700, Short.MAX_VALUE)
+            .addGap(0, 645, Short.MAX_VALUE)
         );
         tabBuscarLayout.setVerticalGroup(
             tabBuscarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -265,7 +265,7 @@ public class MainFrame extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(tabPadre, javax.swing.GroupLayout.DEFAULT_SIZE, 700, Short.MAX_VALUE)
+            .addComponent(tabPadre, javax.swing.GroupLayout.PREFERRED_SIZE, 645, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
