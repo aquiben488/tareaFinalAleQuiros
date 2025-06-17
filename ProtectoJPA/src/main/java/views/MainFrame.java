@@ -4,6 +4,15 @@
  */
 package views;
 
+import views.popUps.LoginDialolog;
+import views.popUps.PopUpAjustes;
+import views.tabs.CrudTab;
+import views.tabs.CategoriasTab;
+import views.tabs.JuegosTab;
+import views.tabs.PublicarTab;
+import views.tabs.ReseñasTab;
+import views.tabs.UsuariosTab;
+import views.tabs.AjustesTab;
 import models.Usuario;
 import java.awt.BorderLayout;
 

@@ -2,52 +2,45 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JPanel.java to edit this template
  */
-package views;
+package views.tabs;
+
+import views.MainFrame;
 
 /**
  *
  * @author ale
  */
-public class CrudTab extends javax.swing.JPanel {
+public class PublicarTab extends javax.swing.JPanel {
 
     /*
-     * TODO - DISEÑO INTERFAZ CRUD (SOLO VISIBLE EN MODO ADMIN):
-     * - JTabbedPane interno con 4 pestañas:
-     *   * "Categorías CRUD"
-     *   * "Videojuegos CRUD" 
-     *   * "Usuarios CRUD"
-     *   * "Reseñas CRUD"
+     * TODO - DISEÑO INTERFAZ PUBLICAR RESEÑAS:
+     * - ComboBox de videojuegos (cargar con VideojuegoController.buscarTodos())
+     * - Slider de puntuación (1-10) con JLabel que muestre valor actual
+     * - JTextArea para comentario de la reseña (con scroll)
+     * - JCheckBox "Contiene spoilers"
+     * - JButton "Publicar Reseña"
      * 
-     * TODO - CADA PESTAÑA INTERNA DEBE TENER:
-     * - JTable para mostrar datos existentes
-     * - Formulario de creación/edición con campos apropiados
-     * - JButton "Crear" para agregar nueva entidad
-     * - JButton "Actualizar" para modificar entidad seleccionada
-     * - JButton "Eliminar" para borrar entidad seleccionada
-     * - Validaciones de campos requeridos
-     * 
-     * TODO - FUNCIONALIDAD POR ENTIDAD:
-     * - Categorías: CategoriaController (crear, actualizar, eliminar, buscarTodos)
-     * - Videojuegos: VideojuegoController (crear, actualizar, eliminar, buscarTodos)
-     * - Usuarios: UsuarioController (crear, actualizar, eliminar, buscarTodos)
-     * - Reseñas: ReseñaController (crear, actualizar, eliminar, buscarTodos)
-     * - Refrescar tabla después de cada operación CRUD
-     * - Mostrar mensajes de éxito/error
+     * TODO - FUNCIONALIDAD:
+     * - Al hacer clic "Publicar": crear nueva Reseña con usuario logueado
+     * - Validar que se haya seleccionado videojuego y escrito comentario
+     * - Usar ReseñaController.crear() para guardar en BD
+     * - Mostrar mensaje de éxito/error
+     * - Limpiar formulario después de publicar
      */
 
     private MainFrame parent;
 
     /**
-     * Creates new form CrudTab
+     * Creates new form PublicartAB
      */
-    public CrudTab() {
+    public PublicarTab() {
         initComponents();
     }
     
     /**
      * Constructor con referencia al MainFrame padre
      */
-    public CrudTab(MainFrame parent) {
+    public PublicarTab(MainFrame parent) {
         this();
         this.parent = parent;
     }

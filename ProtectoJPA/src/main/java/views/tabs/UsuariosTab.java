@@ -2,51 +2,52 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JPanel.java to edit this template
  */
-package views;
+package views.tabs;
 
 import java.util.List;
 
 import javax.swing.ButtonGroup;
 import javax.swing.DefaultListModel;
 
-import controllers.CategoriaController;
-import models.Categoria;
+import controllers.UsuarioController;
+import models.Usuario;
+import views.MainFrame;
+
 /**
  *
  * @author ale
  */
-public class CategoriasTab extends javax.swing.JPanel {
-    
-    
+public class UsuariosTab extends javax.swing.JPanel {
+
     private MainFrame parent;
     private boolean modoAdmin = false;
-    private CategoriaController categoriaController;
-    
+    private UsuarioController usuarioController;
+
     /**
-     * Creates new form CategoriasTab
+     * Creates new form UsuariosTab
      */
-    public CategoriasTab() {
+    public UsuariosTab() {
         initComponents();
         ButtonGroup btnGroup = new ButtonGroup();
         btnGroup.add(rBtnAscendente);
         btnGroup.add(rBtnDescendente);
         rBtnAscendente.setSelected(true);
-        this.categoriaController = new CategoriaController();
+        this.usuarioController = new UsuarioController();
         btnCRUDEditar.setVisible(modoAdmin);
         btnCRUDEliminar.setVisible(modoAdmin);
-
+        MostrarTodosLosUsuarios();
     }
     
     /**
      * Constructor con referencia al MainFrame padre
      */
-    public CategoriasTab(MainFrame parent) {
+    public UsuariosTab(MainFrame parent) {
         this();
         this.parent = parent;
         this.modoAdmin = parent.isModoAdmin();
         btnCRUDEditar.setVisible(modoAdmin);
         btnCRUDEliminar.setVisible(modoAdmin);
-        MostrarTodasLasCategorias();
+        
     }
     
     /**
@@ -67,10 +68,6 @@ public class CategoriasTab extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jPanel1 = new javax.swing.JPanel();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        AreaListaCategorias = new javax.swing.JList<>();
-        BtnReset = new javax.swing.JButton();
         BarraBusqueda = new javax.swing.JTextField();
         BtnBuscar = new javax.swing.JButton();
         rBtnAscendente = new javax.swing.JRadioButton();
@@ -78,20 +75,9 @@ public class CategoriasTab extends javax.swing.JPanel {
         btnCRUDEditar = new javax.swing.JButton();
         btnCRUDEliminar = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
-
-        AreaListaCategorias.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                AreaListaCategoriasMouseClicked(evt);
-            }
-        });
-        jScrollPane1.setViewportView(AreaListaCategorias);
-
-        BtnReset.setText("Reset");
-        BtnReset.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                BtnResetActionPerformed(evt);
-            }
-        });
+        jScrollPane1 = new javax.swing.JScrollPane();
+        AreaListaUsuarios = new javax.swing.JList<>();
+        BtnReset = new javax.swing.JButton();
 
         BarraBusqueda.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -126,88 +112,72 @@ public class CategoriasTab extends javax.swing.JPanel {
 
         jLabel1.setText("Ordenar resultados :");
 
-        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
+        AreaListaUsuarios.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                AreaListaUsuariosMouseClicked(evt);
+            }
+        });
+        jScrollPane1.setViewportView(AreaListaUsuarios);
+
+        BtnReset.setText("Reset");
+        BtnReset.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                BtnResetActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
+        this.setLayout(layout);
+        layout.setHorizontalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
+                        .addGap(2, 2, 2)
                         .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 482, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
                                 .addComponent(rBtnAscendente)
                                 .addGap(18, 18, 18)
                                 .addComponent(rBtnDescendente))
                             .addComponent(jLabel1)))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
+                    .addGroup(layout.createSequentialGroup()
                         .addGap(18, 18, 18)
                         .addComponent(BtnReset)
                         .addGap(18, 18, 18)
                         .addComponent(BarraBusqueda, javax.swing.GroupLayout.PREFERRED_SIZE, 250, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(BtnBuscar)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 31, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(btnCRUDEditar, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(btnCRUDEliminar)))
                 .addContainerGap())
         );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
+        layout.setVerticalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(layout.createSequentialGroup()
                 .addGap(18, 18, 18)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(BtnReset)
                     .addComponent(BarraBusqueda, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(BtnBuscar)
                     .addComponent(btnCRUDEditar)
                     .addComponent(btnCRUDEliminar))
                 .addGap(18, 18, 18)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 306, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
+                    .addGroup(layout.createSequentialGroup()
                         .addGap(21, 21, 21)
                         .addComponent(jLabel1)
                         .addGap(18, 18, 18)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(rBtnAscendente)
                             .addComponent(rBtnDescendente))))
                 .addGap(0, 0, Short.MAX_VALUE))
         );
-
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
-        this.setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-        );
     }// </editor-fold>//GEN-END:initComponents
-
-    private void AreaListaCategoriasMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_AreaListaCategoriasMouseClicked
-        if (evt.getClickCount() == 2) { // Doble clic
-            Categoria categoria = AreaListaCategorias.getSelectedValue();
-            if (categoria != null) {
-                parent.irAJuegosDeCategoria(categoria);
-            }
-        }
-    }//GEN-LAST:event_AreaListaCategoriasMouseClicked
-
-    /**
-     * Selecciona las opciones por defecto
-     * y muestra todas las categorias
-     */
-    private void BtnResetActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BtnResetActionPerformed
-        // Seleccionar opciones por defecto
-        rBtnAscendente.setSelected(true);
-        BarraBusqueda.setText(""); // Limpiar la barra de búsqueda
-        MostrarTodasLasCategorias();
-    }//GEN-LAST:event_BtnResetActionPerformed
 
     /**
      * Hace click en el boton buscar
@@ -218,139 +188,161 @@ public class CategoriasTab extends javax.swing.JPanel {
     }//GEN-LAST:event_BarraBusquedaActionPerformed
 
     /**
-     * Busca las categorias por nombre
+     * Busca los usuarios por nombre
      * la busqueda es parcial
-     * si esta vacio, muestra todas las categorias
+     * si esta vacio, muestra todos los usuarios
      */
     private void BtnBuscarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BtnBuscarActionPerformed
         if (BarraBusqueda.getText().isEmpty()) {
-            MostrarTodasLasCategorias();
+            MostrarTodosLosUsuarios();
         }else{
             FiltrarPorNombre(BarraBusqueda.getText());
         }
     }//GEN-LAST:event_BtnBuscarActionPerformed
 
     /**
-     * Edita una categoria
+     * Edita un usuario
      * cuando se hace click en el boton editar
      */
     private void btnCRUDEditarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCRUDEditarActionPerformed
-        Categoria categoria = AreaListaCategorias.getSelectedValue();
-        if (categoria != null) {
-            // TODO: Implementar la funcionalidad de editar una categoria
-            //parent.irAEditarCategoria(categoria);
+        Usuario usuario = AreaListaUsuarios.getSelectedValue();
+        if (usuario != null) {
+            // TODO: Implementar la funcionalidad de editar un usuario
+            //parent.irAEditarUsuario(usuario);
         }
     }//GEN-LAST:event_btnCRUDEditarActionPerformed
 
     /**
-     * Elimina una categoria
+     * Elimina un usuario
      * cuando se hace click en el boton eliminar
      */
     private void btnCRUDEliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCRUDEliminarActionPerformed
-        Categoria categoria = AreaListaCategorias.getSelectedValue();
-        if (categoria != null) {
+        Usuario usuario = AreaListaUsuarios.getSelectedValue();
+        if (usuario != null) {
             // TODO Implementar popUp de confirmacion
             try {
-                categoriaController.eliminar(categoria.getIdCategoria());
-                MostrarTodasLasCategorias(); // Recargar lista tras eliminación exitosa
+                usuarioController.eliminar(usuario.getIdUsuario());
+                MostrarTodosLosUsuarios(); // Recargar lista tras eliminación exitosa
             } catch (IllegalArgumentException e) {
                 MostrarError("Error: " + e.getMessage() + ". Inténtelo de nuevo.");
             } catch (RuntimeException e) {
-                MostrarError("Error del sistema. No se pudo eliminar la categoria.");
+                MostrarError("Error del sistema. No se pudo eliminar el usuario.");
             }
         }
     }//GEN-LAST:event_btnCRUDEliminarActionPerformed
 
+    /**
+     * Muestra las reseñas de un usuario
+     * cuando se hace doble click en un usuario
+     */
+    private void AreaListaUsuariosMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_AreaListaUsuariosMouseClicked
+        if (evt.getClickCount() == 2) { // Doble clic
+            Usuario usuario = AreaListaUsuarios.getSelectedValue();
+            if (usuario != null) {
+                parent.irAReseñasDeUsuario(usuario);
+            }
+        }
+    }//GEN-LAST:event_AreaListaUsuariosMouseClicked
 
     /**
-     * Muestra todas las categorias
+     * Selecciona las opciones por defecto
+     * y muestra todos los usuarios
      */
-    private void MostrarTodasLasCategorias() {
-        List<Categoria> categorias = null;
+    private void BtnResetActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BtnResetActionPerformed
+        // Seleccionar opciones por defecto
+        rBtnAscendente.setSelected(true);
+        BarraBusqueda.setText(""); // Limpiar la barra de búsqueda
+        MostrarTodosLosUsuarios();
+    }//GEN-LAST:event_BtnResetActionPerformed
+
+    /**
+     * Muestra todos los usuarios
+     */
+    private void MostrarTodosLosUsuarios() {
+        List<Usuario> usuarios = null;
         try {
-            categorias = categoriaController.buscarTodas();
-            MostrarCategorias(categorias);
+            usuarios = usuarioController.buscarTodos();
+            MostrarUsuarios(usuarios);
         } catch (Exception e) {
             MostrarError(e.getMessage());
         }
     }
 
     /**
-     * Filtrar categorias por nombre
+     * Filtrar usuarios por nombre
      * la busqueda es parcial
      */
     private void FiltrarPorNombre(String nombre) {
-        List<Categoria> categorias = null;
+        List<Usuario> usuarios = null;
         try {
-            // Buscar todas las categorías y filtrar por texto contenido
-            categorias = categoriaController.buscarTodas();
-            categorias = categorias.stream()
-                .filter(c -> c.getNombre().toLowerCase().contains(nombre.toLowerCase()))
+            // Buscar todos los usuarios y filtrar por texto contenido
+            usuarios = usuarioController.buscarTodos();
+            usuarios = usuarios.stream()
+                .filter(u -> u.getNombre().toLowerCase().contains(nombre.toLowerCase()))
                 .collect(java.util.stream.Collectors.toList());
             
-            // Aplicar ordenamiento
-            MostrarCategorias(categorias);
+            MostrarUsuarios(usuarios);
         } catch (Exception e) {
             MostrarError(e.getMessage());
         }
     }
 
     /**
-     * Muestra las categorias en la lista
-     * es el unico metodo con la responsabilidad de mostrar las categorias
+     * Muestra los usuarios en la lista
+     * es el unico metodo con la responsabilidad de mostrar los usuarios
      * en la lista
      */
-    public void MostrarCategorias(List<Categoria> categorias) {
-        if (categorias.isEmpty()) {
-            MostrarError("No hay categorias que mostrar");
-            return; // Salir para evitar sobrescribir el mensaje de error
+    public void MostrarUsuarios(List<Usuario> usuarios) {
+        if (usuarios.isEmpty()) {
+            MostrarError("No hay usuarios que mostrar");
+        }else{
+        DefaultListModel<Usuario> modeloLista = new DefaultListModel<>();
+        usuarios.sort(getComparator());
+        for (Usuario usuario : usuarios) {
+            modeloLista.addElement(usuario);
+            }
+            AreaListaUsuarios.setModel(modeloLista);
         }
-        DefaultListModel<Categoria> modeloLista = new DefaultListModel<>();
-        categorias.sort(getComparator());
-        for (Categoria categoria : categorias) {
-            modeloLista.addElement(categoria);
-        }
-        AreaListaCategorias.setModel(modeloLista);
     }
 
     /**
      * Muestra un mensaje de error
-     * como la lista es de categorias,
-     * se crea una categoria temporal con el mensaje de error
+     * como la lista es de usuarios,
+     * se crea un usuario temporal con el mensaje de error
      * (mejor que hacer un JOptionPane)
      */
     private void MostrarError(String mensaje) {
-        DefaultListModel<Categoria> modeloLista = new DefaultListModel<>();
-        modeloLista.addElement(new Categoria(){
+        DefaultListModel<Usuario> modeloLista = new DefaultListModel<>();
+        modeloLista.addElement(new Usuario(){
             @Override
             public String toString() {
                 return mensaje;
             }
         });
-        AreaListaCategorias.setModel(modeloLista);
+        AreaListaUsuarios.setModel(modeloLista);
     }
 
     /**
-     * Obtiene el comparador de categorías según el radio button seleccionado
+     * Obtiene el comparador de usuarios según el radio button seleccionado
      * y el orden ascendente o descendente
      */
-    private java.util.Comparator<Categoria> getComparator() {
-        java.util.Comparator<Categoria> comparator = (c1, c2) -> {
-            return c1.getNombre().compareTo(c2.getNombre());
+    private java.util.Comparator<Usuario> getComparator() {
+        java.util.Comparator<Usuario> comparator = (u1, u2) -> {
+            return u1.getNombre().compareTo(u2.getNombre());
         };
         
         return (rBtnAscendente.isSelected()) ? comparator : comparator.reversed();
     }
 
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JList<Categoria> AreaListaCategorias;
+    private javax.swing.JList<Usuario> AreaListaUsuarios;
     private javax.swing.JTextField BarraBusqueda;
     private javax.swing.JButton BtnBuscar;
     private javax.swing.JButton BtnReset;
     private javax.swing.JButton btnCRUDEditar;
     private javax.swing.JButton btnCRUDEliminar;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JRadioButton rBtnAscendente;
     private javax.swing.JRadioButton rBtnDescendente;

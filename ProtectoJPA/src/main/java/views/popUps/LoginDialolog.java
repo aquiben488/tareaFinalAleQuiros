@@ -1,4 +1,4 @@
-package views;
+package views.popUps;
 
 import javax.swing.JOptionPane;
 
