@@ -4,32 +4,24 @@
  */
 package views;
 
+import java.util.List;
+
+import javax.swing.ButtonGroup;
+import javax.swing.DefaultListModel;
+
+import controllers.UsuarioController;
+import models.Categoria;
+import models.Usuario;
+
 /**
  *
  * @author ale
  */
 public class UsuariosTab extends javax.swing.JPanel {
 
-    /*
-     * TODO - DISEÑO INTERFAZ USUARIOS:
-     * - JList o JTable para mostrar usuarios (nombre, email, total reseñas)
-     * - Sidebar derecho con filtros:
-     *   * JTextField para filtro por nombre
-     *   * JTextField para filtro por email
-     * - JButton "Buscar" para aplicar filtros
-     * - JButton "Reset (❌)" para mostrar todos los usuarios
-     * 
-     * TODO - FUNCIONALIDAD:
-     * - Cargar usuarios con UsuarioController.buscarTodos()
-     * - Filtrar por nombre: UsuarioController.buscarPorNombre()
-     * - Filtrar por email: UsuarioController.buscarPorEmail()
-     * - Al hacer clic en usuario: parent.irAReseñasDeUsuario(usuario)
-     * - Mostrar estadísticas: total de reseñas por usuario
-     * - Doble clic en usuario también navega a sus reseñas
-     */
-
     private MainFrame parent;
     private boolean modoAdmin = false;
+    private UsuarioController usuarioController;
 
     /**
      * Creates new form UsuariosTab
@@ -44,6 +36,14 @@ public class UsuariosTab extends javax.swing.JPanel {
     public UsuariosTab(MainFrame parent) {
         this();
         this.parent = parent;
+        this.modoAdmin = parent.isModoAdmin();
+        btnCRUDEditar.setVisible(modoAdmin);
+        btnCRUDEliminar.setVisible(modoAdmin);
+        ButtonGroup btnGroup = new ButtonGroup();
+        btnGroup.add(rBtnAscendente);
+        btnGroup.add(rBtnDescendente);
+        this.usuarioController = new UsuarioController();
+        MostrarTodasLosUsuarios();
     }
     
     /**
@@ -51,7 +51,8 @@ public class UsuariosTab extends javax.swing.JPanel {
      */
     public void actualizarModoAdmin(boolean modoAdmin) {
         this.modoAdmin = modoAdmin;
-        // TODO: agregar la lógica para mostrar/ocultar botones
+        btnCRUDEditar.setVisible(modoAdmin);
+        btnCRUDEliminar.setVisible(modoAdmin);
     }
 
     /**
@@ -63,30 +64,279 @@ public class UsuariosTab extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jButton1 = new javax.swing.JButton();
+        BarraBusqueda = new javax.swing.JTextField();
+        BtnBuscar = new javax.swing.JButton();
+        rBtnAscendente = new javax.swing.JRadioButton();
+        rBtnDescendente = new javax.swing.JRadioButton();
+        btnCRUDEditar = new javax.swing.JButton();
+        btnCRUDEliminar = new javax.swing.JButton();
+        jLabel1 = new javax.swing.JLabel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        AreaListaUsuarios = new javax.swing.JList<>();
+        BtnReset = new javax.swing.JButton();
 
-        jButton1.setText("jButton1");
+        BarraBusqueda.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                BarraBusquedaActionPerformed(evt);
+            }
+        });
+
+        BtnBuscar.setText("Buscar");
+        BtnBuscar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                BtnBuscarActionPerformed(evt);
+            }
+        });
+
+        rBtnAscendente.setText("Asc");
+
+        rBtnDescendente.setText("Desc");
+
+        btnCRUDEditar.setText("Editar");
+        btnCRUDEditar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCRUDEditarActionPerformed(evt);
+            }
+        });
+
+        btnCRUDEliminar.setText("Eliminar");
+        btnCRUDEliminar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCRUDEliminarActionPerformed(evt);
+            }
+        });
+
+        jLabel1.setText("Ordenar resultados :");
+
+        AreaListaUsuarios.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                AreaListaUsuariosMouseClicked(evt);
+            }
+        });
+        jScrollPane1.setViewportView(AreaListaUsuarios);
+
+        BtnReset.setText("Reset");
+        BtnReset.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                BtnResetActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(245, Short.MAX_VALUE)
-                .addComponent(jButton1)
-                .addGap(73, 73, 73))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
+                        .addGap(2, 2, 2)
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 482, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(rBtnAscendente)
+                                .addGap(18, 18, 18)
+                                .addComponent(rBtnDescendente))
+                            .addComponent(jLabel1)))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(18, 18, 18)
+                        .addComponent(BtnReset)
+                        .addGap(18, 18, 18)
+                        .addComponent(BarraBusqueda, javax.swing.GroupLayout.PREFERRED_SIZE, 250, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(BtnBuscar)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(btnCRUDEditar, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btnCRUDEliminar)))
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(83, 83, 83)
-                .addComponent(jButton1)
-                .addContainerGap(194, Short.MAX_VALUE))
+                .addGap(18, 18, 18)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(BtnReset)
+                    .addComponent(BarraBusqueda, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(BtnBuscar)
+                    .addComponent(btnCRUDEditar)
+                    .addComponent(btnCRUDEliminar))
+                .addGap(18, 18, 18)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 306, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(21, 21, 21)
+                        .addComponent(jLabel1)
+                        .addGap(18, 18, 18)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(rBtnAscendente)
+                            .addComponent(rBtnDescendente))))
+                .addGap(0, 0, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
+    /**
+     * Hace click en el boton buscar
+     * (hacer enter es igual a hacer click en el boton buscar)
+     */
+    private void BarraBusquedaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BarraBusquedaActionPerformed
+        BtnBuscarActionPerformed(evt);
+    }//GEN-LAST:event_BarraBusquedaActionPerformed
+
+    /**
+     * Busca los usuarios por nombre
+     * la busqueda es parcial
+     * si esta vacio, muestra todos los usuarios
+     */
+    private void BtnBuscarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BtnBuscarActionPerformed
+        if (BarraBusqueda.getText().isEmpty()) {
+            MostrarTodasLosUsuarios();
+        }
+        FiltrarPorNombre(BarraBusqueda.getText());
+    }//GEN-LAST:event_BtnBuscarActionPerformed
+
+    /**
+     * Edita un usuario
+     * cuando se hace click en el boton editar
+     */
+    private void btnCRUDEditarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCRUDEditarActionPerformed
+        Usuario usuario = AreaListaUsuarios.getSelectedValue();
+        if (usuario != null) {
+            // TODO: Implementar la funcionalidad de editar un usuario
+            //parent.irAEditarUsuario(usuario);
+        }
+    }//GEN-LAST:event_btnCRUDEditarActionPerformed
+
+    /**
+     * Elimina un usuario
+     * cuando se hace click en el boton eliminar
+     */
+    private void btnCRUDEliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCRUDEliminarActionPerformed
+        Usuario usuario = AreaListaUsuarios.getSelectedValue();
+        if (usuario != null) {
+            // TODO Implementar popUp de confirmacion
+            try {
+                usuarioController.eliminar(usuario.getIdUsuario());
+                MostrarTodasLosUsuarios(); // Recargar lista tras eliminación exitosa
+            } catch (IllegalArgumentException e) {
+                MostrarError("Error: " + e.getMessage() + ". Inténtelo de nuevo.");
+            } catch (RuntimeException e) {
+                MostrarError("Error del sistema. No se pudo eliminar el usuario.");
+            }
+        }
+    }//GEN-LAST:event_btnCRUDEliminarActionPerformed
+
+    /**
+     * Muestra las reseñas de un usuario
+     * cuando se hace doble click en un usuario
+     */
+    private void AreaListaUsuariosMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_AreaListaUsuariosMouseClicked
+        if (evt.getClickCount() == 2) { // Doble clic
+            Usuario usuario = AreaListaUsuarios.getSelectedValue();
+            if (usuario != null) {
+                parent.irAReseñasDeUsuario(usuario);
+            }
+        }
+    }//GEN-LAST:event_AreaListaUsuariosMouseClicked
+
+    /**
+     * Selecciona las opciones por defecto
+     * y muestra todos los usuarios
+     */
+    private void BtnResetActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BtnResetActionPerformed
+        // Seleccionar opciones por defecto
+        rBtnAscendente.setSelected(true);
+        MostrarTodasLosUsuarios();
+    }//GEN-LAST:event_BtnResetActionPerformed
+
+    /**
+     * Muestra todos los usuarios
+     */
+    private void MostrarTodasLosUsuarios() {
+        List<Usuario> usuarios = null;
+        try {
+            usuarios = usuarioController.buscarTodos();
+            usuarios.sort(getComparator());
+            MostrarUsuarios(usuarios);
+        } catch (Exception e) {
+            MostrarError(e.getMessage());
+        }
+    }
+
+    /**
+     * Filtrar usuarios por nombre
+     * la busqueda es parcial
+     */
+    private void FiltrarPorNombre(String nombre) {
+        List<Usuario> usuarios = null;
+        try {
+            // Buscar todos los usuarios y filtrar por texto contenido
+            usuarios = usuarioController.buscarTodos();
+            usuarios = usuarios.stream()
+                .filter(u -> u.getNombre().toLowerCase().contains(nombre.toLowerCase()))
+                .collect(java.util.stream.Collectors.toList());
+            
+            // Aplicar ordenamiento
+            usuarios.sort(getComparator());
+            MostrarUsuarios(usuarios);
+        } catch (Exception e) {
+            MostrarError(e.getMessage());
+        }
+    }
+
+    /**
+     * Muestra los usuarios en la lista
+     * es el unico metodo con la responsabilidad de mostrar los usuarios
+     * en la lista
+     */
+    public void MostrarUsuarios(List<Usuario> usuarios) {
+        DefaultListModel<Usuario> modeloLista = new DefaultListModel<>();
+        for (Usuario usuario : usuarios) {
+            modeloLista.addElement(usuario);
+        }
+        AreaListaUsuarios.setModel(modeloLista);
+    }
+
+    /**
+     * Muestra un mensaje de error
+     * como la lista es de usuarios,
+     * se crea un usuario temporal con el mensaje de error
+     * (mejor que hacer un JOptionPane)
+     */
+    private void MostrarError(String mensaje) {
+        DefaultListModel<Usuario> modeloLista = new DefaultListModel<>();
+        modeloLista.addElement(new Usuario(){
+            @Override
+            public String toString() {
+                return mensaje;
+            }
+        });
+        AreaListaUsuarios.setModel(modeloLista);
+    }
+
+    /**
+     * Obtiene el comparador de usuarios según el radio button seleccionado
+     * y el orden ascendente o descendente
+     */
+    private java.util.Comparator<Usuario> getComparator() {
+        java.util.Comparator<Usuario> comparator = (u1, u2) -> {
+            return u1.getNombre().compareTo(u2.getNombre());
+        };
+        
+        return (rBtnAscendente.isSelected()) ? comparator : comparator.reversed();
+    }
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton1;
+    private javax.swing.JList<Usuario> AreaListaUsuarios;
+    private javax.swing.JTextField BarraBusqueda;
+    private javax.swing.JButton BtnBuscar;
+    private javax.swing.JButton BtnReset;
+    private javax.swing.JButton btnCRUDEditar;
+    private javax.swing.JButton btnCRUDEliminar;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JRadioButton rBtnAscendente;
+    private javax.swing.JRadioButton rBtnDescendente;
     // End of variables declaration//GEN-END:variables
 }
