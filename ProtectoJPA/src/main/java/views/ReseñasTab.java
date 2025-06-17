@@ -4,20 +4,41 @@
  */
 package views;
 
+import controllers.ReseñaController;
+import controllers.UsuarioController;
+import controllers.VideojuegoController;
+import models.Reseña;
+import models.Videojuego;
+
+import java.awt.BorderLayout;
+import java.awt.Component;
+import java.time.format.DateTimeFormatter;
+import java.util.Comparator;
+import java.util.List;
+
+import javax.swing.ButtonGroup;
+import javax.swing.DefaultListCellRenderer;
+import javax.swing.DefaultListModel;
+import javax.swing.JLabel;
+import javax.swing.JList;
+import javax.swing.JPanel;
+import javax.swing.JTextArea;
+
 /**
  *
  * @author ale
  */
 public class ReseñasTab extends javax.swing.JPanel {
-    
+
     /*
      * TODO - DISEÑO INTERFAZ RESEÑAS (CENTRO DE VISUALIZACIÓN):
-     * - JList o JTable para mostrar reseñas (videojuego, usuario, puntuación, comentario, útiles)
+     * - JList o JTable para mostrar reseñas (videojuego, usuario, puntuación,
+     * comentario, útiles)
      * - Sidebar derecho con filtros múltiples:
-     *   * JComboBox para filtro por videojuego
-     *   * JComboBox para filtro por usuario
-     *   * JSpinner para puntuación mínima
-     *   * JCheckBox "Mostrar spoilers" (usar parent.isMostrarSpoilers())
+     * * JComboBox para filtro por videojuego
+     * * JComboBox para filtro por usuario
+     * * JSpinner para puntuación mínima
+     * * JCheckBox "Mostrar spoilers" (usar parent.isMostrarSpoilers())
      * - JComboBox de ordenamiento (fecha, útiles, puntuación)
      * - JButton "Buscar" para aplicar filtros
      * - JButton "Reset (❌)" para mostrar todas las reseñas
@@ -29,48 +50,88 @@ public class ReseñasTab extends javax.swing.JPanel {
      * - Implementar mostrarReseñasDeJuego() para navegación desde JuegosTab
      * - Implementar mostrarReseñasDeUsuario() para navegación desde UsuariosTab
      * - Upvotes: ReseñaController.marcarComoUtil()
-     * - Filtro spoilers: ocultar reseñas con spoilers si parent.isMostrarSpoilers() == false
+     * - Filtro spoilers: ocultar reseñas con spoilers si parent.isMostrarSpoilers()
+     * == false
      * - Ordenamiento local de la lista mostrada
      */
-    
+    private ReseñaController reseñaController;
     private MainFrame parent;
     private boolean modoAdmin = false;
-    
+
     /**
      * Creates new form ReseñasTab
      */
     public ReseñasTab() {
         initComponents();
+        ButtonGroup btnGroup = new ButtonGroup();
+        btnGroup.add(rBtnBuscTituloJeugo);
+        btnGroup.add(rBtnBuscUsuario);
+        btnGroup.add(rBtnBuscFecha);
+        ButtonGroup btnGroup2 = new ButtonGroup();
+        btnGroup2.add(rBtnOrdenFecha);
+        btnGroup2.add(rBtnOrdenUtiles);
+        btnGroup2.add(rBtnDescendente);
+
+        ButtonGroup btnGroup3 = new ButtonGroup();
+        btnGroup3.add(rBtnAscendente);
+        btnGroup3.add(rBtnDescendente);
+
+        rBtnBuscTituloJeugo.setSelected(true);
+        rBtnOrdenUtiles.setSelected(true);
+        rBtnAscendente.setSelected(true);
     }
-    
+
     /**
      * Constructor con referencia al MainFrame padre
      */
     public ReseñasTab(MainFrame parent) {
         this();
         this.parent = parent;
+        this.modoAdmin = parent.isModoAdmin();
+        reseñaController = new ReseñaController();
+        btnCRUDEditar.setVisible(modoAdmin);
+        btnCRUDEliminar.setVisible(modoAdmin);
+        MostrarTodosLasReseñas();
+
+        // Aplicar custom renderer para mostrar reseñas multilínea
+        AreaListaReseñas.setCellRenderer(new ReseñaCellRenderer());
     }
-    
+
     /**
      * Actualiza el estado del modo administrador
      */
     public void actualizarModoAdmin(boolean modoAdmin) {
         this.modoAdmin = modoAdmin;
-        // TODO: agregar la lógica para mostrar/ocultar botones
+        btnCRUDEditar.setVisible(modoAdmin);
+        btnCRUDEliminar.setVisible(modoAdmin);
     }
-    
+
     /**
      * Mostrar reseñas de un videojuego específico
      */
     public void mostrarReseñasDeJuego(models.Videojuego juego) {
-        // TODO: Implementar filtrado por videojuego
+        List<Reseña> reseñas = null;
+        try {
+            // Usar directamente el objeto videojuego (más eficiente)
+            reseñas = reseñaController.buscarPorVideojuego(juego);
+            MostrarReseñas(reseñas);
+        } catch (Exception e) {
+            MostrarError("Error al cargar reseñas del videojuego: " + e.getMessage());
+        }
     }
-    
+
     /**
      * Mostrar reseñas de un usuario específico
      */
     public void mostrarReseñasDeUsuario(models.Usuario usuario) {
-        // TODO: Implementar filtrado por usuario
+        List<Reseña> reseñas = null;
+        try {
+            // Usar directamente el objeto usuario (más eficiente)
+            reseñas = reseñaController.buscarPorUsuario(usuario);
+            MostrarReseñas(reseñas);
+        } catch (Exception e) {
+            MostrarError("Error al cargar reseñas del usuario: " + e.getMessage());
+        }
     }
 
     /**
@@ -79,22 +140,535 @@ public class ReseñasTab extends javax.swing.JPanel {
      * regenerated by the Form Editor.
      */
     @SuppressWarnings("unchecked")
-    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+    // <editor-fold defaultstate="collapsed" desc="Generated
+    // <editor-fold defaultstate="collapsed" desc="Generated
+    // Code">//GEN-BEGIN:initComponents
     private void initComponents() {
+
+        jPanel1 = new javax.swing.JPanel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        AreaListaReseñas = new javax.swing.JList<>();
+        BtnReset = new javax.swing.JButton();
+        BarraBusqueda = new javax.swing.JTextField();
+        BtnBuscar = new javax.swing.JButton();
+        jLabel1 = new javax.swing.JLabel();
+        rBtnBuscTituloJeugo = new javax.swing.JRadioButton();
+        rBtnBuscUsuario = new javax.swing.JRadioButton();
+        rBtnBuscFecha = new javax.swing.JRadioButton();
+        jLabel2 = new javax.swing.JLabel();
+        rBtnOrdenFecha = new javax.swing.JRadioButton();
+        rBtnOrdenUtiles = new javax.swing.JRadioButton();
+        rBtnAscendente = new javax.swing.JRadioButton();
+        rBtnDescendente = new javax.swing.JRadioButton();
+        btnCRUDEditar = new javax.swing.JButton();
+        btnCRUDEliminar = new javax.swing.JButton();
+        btnUtil = new javax.swing.JButton();
+
+        AreaListaReseñas.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                AreaListaReseñasMouseClicked(evt);
+            }
+        });
+        jScrollPane1.setViewportView(AreaListaReseñas);
+
+        BtnReset.setText("Reset");
+        BtnReset.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                BtnResetActionPerformed(evt);
+            }
+        });
+
+        BarraBusqueda.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                BarraBusquedaActionPerformed(evt);
+            }
+        });
+
+        BtnBuscar.setText("Buscar");
+        BtnBuscar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                BtnBuscarActionPerformed(evt);
+            }
+        });
+
+        jLabel1.setText("Buscar por :");
+
+        rBtnBuscTituloJeugo.setText("Titulo del juego");
+
+        rBtnBuscUsuario.setText("Usuario");
+
+        rBtnBuscFecha.setText("Puntos minimos");
+
+        jLabel2.setText("Ordenar por :");
+
+        rBtnOrdenFecha.setText("Fecha");
+
+        rBtnOrdenUtiles.setText("Utiles");
+
+        rBtnAscendente.setText("Asc");
+
+        rBtnDescendente.setText("Desc");
+
+        btnCRUDEditar.setText("Editar");
+        btnCRUDEditar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCRUDEditarActionPerformed(evt);
+            }
+        });
+
+        btnCRUDEliminar.setText("Eliminar");
+        btnCRUDEliminar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCRUDEliminarActionPerformed(evt);
+            }
+        });
+
+        btnUtil.setText("Util");
+        btnUtil.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnUtilActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+                jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addGroup(jPanel1Layout.createSequentialGroup()
+                                                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 482,
+                                                        javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                                .addGroup(jPanel1Layout
+                                                        .createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                                        .addComponent(jLabel1)
+                                                        .addComponent(rBtnBuscTituloJeugo)
+                                                        .addComponent(rBtnBuscUsuario)
+                                                        .addComponent(rBtnBuscFecha)
+                                                        .addComponent(jLabel2)
+                                                        .addComponent(rBtnOrdenFecha)
+                                                        .addComponent(rBtnOrdenUtiles)
+                                                        .addGroup(jPanel1Layout.createSequentialGroup()
+                                                                .addComponent(rBtnAscendente)
+                                                                .addGap(32, 32, 32)
+                                                                .addComponent(rBtnDescendente))
+                                                        .addComponent(btnUtil, javax.swing.GroupLayout.PREFERRED_SIZE,
+                                                                54, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                                .addGap(0, 6, Short.MAX_VALUE))
+                                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout
+                                                .createSequentialGroup()
+                                                .addGap(18, 18, 18)
+                                                .addComponent(BtnReset)
+                                                .addGap(18, 18, 18)
+                                                .addComponent(BarraBusqueda, javax.swing.GroupLayout.PREFERRED_SIZE,
+                                                        250, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                                .addComponent(BtnBuscar)
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED,
+                                                        javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                                .addComponent(btnCRUDEditar, javax.swing.GroupLayout.PREFERRED_SIZE, 67,
+                                                        javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                .addComponent(btnCRUDEliminar)))
+                                .addContainerGap()));
+        jPanel1Layout.setVerticalGroup(
+                jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addGap(18, 18, 18)
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                        .addComponent(BtnReset)
+                                        .addComponent(BarraBusqueda, javax.swing.GroupLayout.PREFERRED_SIZE,
+                                                javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(BtnBuscar)
+                                        .addComponent(btnCRUDEditar)
+                                        .addComponent(btnCRUDEliminar))
+                                .addGap(18, 18, 18)
+                                .addGroup(jPanel1Layout
+                                        .createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 306,
+                                                javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addGroup(jPanel1Layout.createSequentialGroup()
+                                                .addComponent(btnUtil)
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED,
+                                                        javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                                .addComponent(jLabel1)
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                                .addComponent(rBtnBuscTituloJeugo)
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                .addComponent(rBtnBuscUsuario)
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                .addComponent(rBtnBuscFecha)
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                                .addComponent(jLabel2)
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                                .addComponent(rBtnOrdenFecha)
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                .addComponent(rBtnOrdenUtiles)
+                                                .addGap(18, 18, 18)
+                                                .addGroup(jPanel1Layout
+                                                        .createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                                        .addComponent(rBtnAscendente)
+                                                        .addComponent(rBtnDescendente))
+                                                .addGap(38, 38, 38)))
+                                .addGap(0, 0, Short.MAX_VALUE)));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 400, Short.MAX_VALUE)
-        );
+                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE,
+                                javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE));
         layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 300, Short.MAX_VALUE)
-        );
+                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE,
+                                javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE));
     }// </editor-fold>//GEN-END:initComponents
 
+    private void AreaListaReseñasMouseClicked(java.awt.event.MouseEvent evt) {// GEN-FIRST:event_AreaListaReseñasMouseClicked
+
+    }// GEN-LAST:event_AreaListaReseñasMouseClicked
+
+    private void BtnResetActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_BtnResetActionPerformed
+        // Seleccionar opciones por defecto
+        rBtnBuscTituloJeugo.setSelected(true);
+        rBtnOrdenFecha.setSelected(true);
+        rBtnAscendente.setSelected(true);
+        BarraBusqueda.setText(""); // Limpiar la barra de búsqueda
+        MostrarTodosLasReseñas();
+    }// GEN-LAST:event_BtnResetActionPerformed
+
+    private void BarraBusquedaActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_BarraBusquedaActionPerformed
+        BtnBuscarActionPerformed(evt);
+    }// GEN-LAST:event_BarraBusquedaActionPerformed
+
+    private void BtnBuscarActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_BtnBuscarActionPerformed
+        if (BarraBusqueda.getText().isEmpty()) {
+            MostrarTodosLasReseñas();
+        }
+        if (rBtnBuscTituloJeugo.isSelected()) {
+            FiltrarPorTitulo(BarraBusqueda.getText());
+        }
+        if (rBtnBuscUsuario.isSelected()) {
+            FiltrarPorUsuario(BarraBusqueda.getText());
+        }
+        if (rBtnBuscFecha.isSelected()) {
+            try {
+                FiltrarPorPuntuacionMinima(Double.parseDouble(BarraBusqueda.getText()));
+            } catch (NumberFormatException e) {
+                MostrarError("La puntuación debe ser un número decimal (0.0 - 10.0) con puntos como separador");
+            }
+        }
+    }// GEN-LAST:event_BtnBuscarActionPerformed
+
+    private void btnCRUDEditarActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_btnCRUDEditarActionPerformed
+        Reseña reseña = AreaListaReseñas.getSelectedValue();
+        if (reseña != null) {
+            // TODO: Implementar la funcionalidad de editar una reseña
+            // parent.irAEditarReseña(reseña);
+        }
+    }// GEN-LAST:event_btnCRUDEditarActionPerformed
+
+    private void btnCRUDEliminarActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_btnCRUDEliminarActionPerformed
+        Reseña reseña = AreaListaReseñas.getSelectedValue();
+        if (reseña != null) {
+            // TODO Implementar popUp de confirmacion
+            try {
+                reseñaController.eliminar(reseña.getIdReseña());
+                MostrarTodosLasReseñas(); // Recargar lista tras eliminación exitosa
+            } catch (IllegalArgumentException e) {
+                MostrarError("Error: " + e.getMessage() + ". Inténtelo de nuevo.");
+            } catch (RuntimeException e) {
+                MostrarError("Error del sistema. No se pudo eliminar la reseña.");
+            }
+        }
+    }// GEN-LAST:event_btnCRUDEliminarActionPerformed
+
+    private void btnUtilActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_btnUtilActionPerformed
+        Reseña reseña = AreaListaReseñas.getSelectedValue();
+        if (reseña != null) {
+            try {
+                reseñaController.marcarComoUtil(reseña.getIdReseña());
+            } catch (IllegalArgumentException e) {
+                MostrarError("Error: " + e.getMessage() + ". Inténtelo de nuevo.");
+            } catch (RuntimeException e) {
+                MostrarError("Error del sistema. No se pudo marcar la reseña como útil.");
+            }
+        }
+    }// GEN-LAST:event_btnUtilActionPerformed
+
+    /**
+     * Filtrar reseñas por titulo
+     * la busqueda es parcial
+     */
+    public void FiltrarPorTitulo(String titulo) {
+        List<Reseña> reseñas = null;
+        try {
+            // Para filtros desde la barra de búsqueda, usar búsqueda parcial
+            VideojuegoController videojuegoController = new VideojuegoController();
+            List<models.Videojuego> videojuegos = videojuegoController.buscarTodos();
+
+            // Filtrar videojuegos que contienen el texto buscado (parcial)
+            videojuegos = videojuegos.stream()
+                    .filter(v -> v.getTitulo().toLowerCase().contains(titulo.toLowerCase()))
+                    .collect(java.util.stream.Collectors.toList());
+
+            // Obtener reseñas de todos los videojuegos que coinciden
+            reseñas = new java.util.ArrayList<>();
+            for (models.Videojuego videojuego : videojuegos) {
+                reseñas.addAll(reseñaController.buscarPorVideojuego(videojuego));
+            }
+
+            // Eliminar duplicados
+            reseñas = reseñas.stream()
+                    .distinct()
+                    .collect(java.util.stream.Collectors.toList());
+
+            MostrarReseñas(reseñas);
+        } catch (Exception e) {
+            MostrarError("Error al buscar reseñas por titulo: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Filtrar reseñas por usuario
+     * la busqueda es parcial
+     */
+    public void FiltrarPorUsuario(String strUsuario) {
+        List<Reseña> reseñas = null;
+        try {
+            // Para filtros desde la barra de búsqueda, usar búsqueda parcial
+            UsuarioController usuarioController = new UsuarioController();
+            List<models.Usuario> usuarios = usuarioController.buscarTodos();
+
+            // Filtrar usuarios que contienen el texto buscado (parcial)
+            usuarios = usuarios.stream()
+                    .filter(u -> u.getNombre().toLowerCase().contains(strUsuario.toLowerCase()))
+                    .collect(java.util.stream.Collectors.toList());
+
+            // Obtener reseñas de todos los usuarios que coinciden
+            reseñas = new java.util.ArrayList<>();
+            for (models.Usuario usuario : usuarios) {
+                reseñas.addAll(reseñaController.buscarPorUsuario(usuario));
+            }
+
+            // Eliminar duplicados
+            reseñas = reseñas.stream()
+                    .distinct()
+                    .collect(java.util.stream.Collectors.toList());
+            MostrarReseñas(reseñas);
+        } catch (Exception e) {
+            MostrarError("Error al buscar reseñas por usuario: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Filtrar reseñas por puntuación mínima
+     * la busqueda es exacta
+     */
+    public void FiltrarPorPuntuacionMinima(double puntuacionMinima) {
+        List<Reseña> reseñas = null;
+        try {
+            reseñas = reseñaController.buscarPorPuntuacionMinima(puntuacionMinima);
+            MostrarReseñas(reseñas);
+        } catch (Exception e) {
+            MostrarError("Error al buscar reseñas por puntuación mínima: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Muestra todas las reseñas
+     */
+    public void MostrarTodosLasReseñas() {
+        List<Reseña> reseñas = null;
+        try {
+            reseñas = reseñaController.buscarTodas();
+            MostrarReseñas(reseñas);
+        } catch (Exception e) {
+            MostrarError(e.getMessage());
+        }
+    }
+
+    /**
+     * Muestra las reseñas en la lista
+     * toda la responsabilidad de mostrar las reseñas en la lista
+     * es de este metodo
+     */
+    public void MostrarReseñas(List<Reseña> reseñas) {
+
+        if (reseñas.isEmpty()) {
+            // Debido a los metodos de filtrado parcial puede llegar aqui
+            // una lista vacia, si llega se muestra un mensaje de error
+            MostrarError("No se han encontrado reseñas");
+            return; // Salir para evitar sobrescribir el mensaje de error
+        }
+        if (!parent.isMostrarSpoilers()) { // si no se muestran spoilers, se filtran
+            reseñas = reseñas.stream()
+                    .filter(r -> !r.getSpoilers())
+                    .collect(java.util.stream.Collectors.toList());
+
+            if (reseñas.isEmpty()) {
+                MostrarError("No hay reseñas que mostrar, todas son spoilers");
+            }
+        } else {
+            DefaultListModel<Reseña> modeloLista = new DefaultListModel<>();
+            reseñas.sort(getComparator());
+            for (Reseña reseña : reseñas) {
+                modeloLista.addElement(reseña);
+            }
+
+            AreaListaReseñas.setModel(modeloLista);
+        }
+    }
+
+    /**
+     * Muestra un mensaje de error
+     * Se crea una reseña temporal SIN usuario (null) para que el renderer
+     * la detecte como mensaje de error y la muestre en rojo
+     */
+    public void MostrarError(String mensaje) {
+        DefaultListModel<Reseña> modeloLista = new DefaultListModel<>();
+        // Crear una reseña temporal con usuario=null para que se detecte como error
+        modeloLista.addElement(new Reseña() {
+            @Override
+            public String toString() {
+                return "❌ " + mensaje;
+            }
+
+            @Override
+            public models.Usuario getUsuario() {
+                return null; // Clave: esto hace que el renderer detecte el error
+            }
+        });
+        AreaListaReseñas.setModel(modeloLista);
+    }
+
+    /**
+     * Obtiene el comparador de reseñas según el radio button seleccionado
+     * y el orden ascendente o descendente
+     */
+    public Comparator<Reseña> getComparator() {
+        Comparator<Reseña> comparator = (Reseña r1, Reseña r2) -> {
+            if (rBtnOrdenFecha.isSelected()) {
+                return r1.getFechaReseña().compareTo(r2.getFechaReseña());
+            } else if (rBtnOrdenUtiles.isSelected()) {
+                return r1.getUtiles().compareTo(r2.getUtiles());
+            } else {
+                return 0;
+            }
+        };
+        return (rBtnAscendente.isSelected()) ? comparator : comparator.reversed();
+    }
+
+    /**
+     * Custom renderer SIMPLIFICADO para mostrar reseñas con formato multilínea
+     * ESTRATEGIA: Evitar HTML y usar componentes simples con colores explícitos
+     * mentiria si digo que esto no lo ha hecho la ia, mas o menos entiendo como
+     * funciona pero no lo he hecho yo menos lo de que muestre los errores
+     */
+    private class ReseñaCellRenderer extends DefaultListCellRenderer {
+        @Override
+        public Component getListCellRendererComponent(
+                JList<?> list, Object value, int index,
+                boolean isSelected, boolean cellHasFocus) {
+
+            // si el usuario es null, es un mensaje de error
+            if (!(value instanceof Reseña) ||
+                    (value instanceof Reseña && ((Reseña) value).getUsuario() == null)) {
+
+                // Usar renderer por defecto para errores (más confiable)
+                Component errorComponent = super.getListCellRendererComponent(
+                        list, value.toString(), index, isSelected, cellHasFocus);
+
+                // Forzar color rojo para errores (solo si no está seleccionado)
+                if (!isSelected) {
+                    errorComponent.setForeground(java.awt.Color.RED);
+                }
+
+                return errorComponent;
+            }
+
+            Reseña reseña = (Reseña) value;
+
+            // Panel principal con colores explícitos (si no no se ve bien)
+            JPanel panelReseña = new JPanel(new BorderLayout(5, 2));
+            panelReseña.setBorder(javax.swing.BorderFactory.createEmptyBorder(4, 8, 4, 8));
+
+            // COLORES EXPLÍCITOS según selección
+            java.awt.Color bgColor, fgColor;
+            if (isSelected) {
+                bgColor = new java.awt.Color(51, 153, 255); // Azul claro
+                fgColor = java.awt.Color.WHITE;
+            } else {
+                bgColor = java.awt.Color.WHITE;
+                fgColor = java.awt.Color.BLACK;
+            }
+
+            panelReseña.setBackground(bgColor);
+            panelReseña.setOpaque(true);
+
+            // Header
+            StringBuilder headerText = new StringBuilder();
+            headerText.append(reseña.getUsuario().getNombre())
+                    .append(" | ")
+                    .append(reseña.getVideojuego().getTitulo())
+                    .append(" | ⭐")
+                    .append(String.format("%.1f", reseña.getPuntuacion()))
+                    .append(" | 👍")
+                    .append(reseña.getUtiles() != null ? reseña.getUtiles() : 0);
+
+            if (reseña.getFechaReseña() != null) {
+                headerText.append(" | 📅").append(reseña.getFechaReseña().format(DateTimeFormatter.ofPattern("MM/yy")));
+            }
+
+            if (reseña.getSpoilers() != null && reseña.getSpoilers()) {
+                headerText.append(" | ⚠️Spoilers");
+            }
+
+            // JLabel fuente en negrita
+            JLabel labelHeader = new JLabel(headerText.toString());
+            labelHeader.setFont(labelHeader.getFont().deriveFont(java.awt.Font.BOLD));
+            labelHeader.setForeground(fgColor);
+            labelHeader.setOpaque(false);
+
+            // Comentario multilínea (el motivo de que reseñas tenga un modelo especial)
+            JTextArea areaComentario = new JTextArea();
+            areaComentario.setText(reseña.getComentario() != null ? reseña.getComentario() : "Sin comentario");
+            areaComentario.setLineWrap(true);
+            areaComentario.setWrapStyleWord(true);
+            areaComentario.setRows(2);
+            areaComentario.setEditable(false);
+            areaComentario.setOpaque(false);
+            areaComentario.setForeground(fgColor);
+            areaComentario.setBackground(bgColor);
+
+            // Ensamblar panel
+            panelReseña.add(labelHeader, BorderLayout.NORTH);
+            panelReseña.add(areaComentario, BorderLayout.CENTER);
+
+            return panelReseña;
+        }
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JList<Reseña> AreaListaReseñas;
+    private javax.swing.JTextField BarraBusqueda;
+    private javax.swing.JButton BtnBuscar;
+    private javax.swing.JButton BtnReset;
+    private javax.swing.JButton btnCRUDEditar;
+    private javax.swing.JButton btnCRUDEliminar;
+    private javax.swing.JButton btnUtil;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JPanel jPanel1;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JRadioButton rBtnAscendente;
+    private javax.swing.JRadioButton rBtnBuscFecha;
+    private javax.swing.JRadioButton rBtnBuscTituloJeugo;
+    private javax.swing.JRadioButton rBtnBuscUsuario;
+    private javax.swing.JRadioButton rBtnDescendente;
+    private javax.swing.JRadioButton rBtnOrdenFecha;
+    private javax.swing.JRadioButton rBtnOrdenUtiles;
     // End of variables declaration//GEN-END:variables
 }
