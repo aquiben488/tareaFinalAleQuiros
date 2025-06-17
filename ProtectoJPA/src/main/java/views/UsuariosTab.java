@@ -10,7 +10,6 @@ import javax.swing.ButtonGroup;
 import javax.swing.DefaultListModel;
 
 import controllers.UsuarioController;
-import models.Categoria;
 import models.Usuario;
 
 /**
@@ -28,6 +27,14 @@ public class UsuariosTab extends javax.swing.JPanel {
      */
     public UsuariosTab() {
         initComponents();
+        ButtonGroup btnGroup = new ButtonGroup();
+        btnGroup.add(rBtnAscendente);
+        btnGroup.add(rBtnDescendente);
+        rBtnAscendente.setSelected(true);
+        this.usuarioController = new UsuarioController();
+        btnCRUDEditar.setVisible(modoAdmin);
+        btnCRUDEliminar.setVisible(modoAdmin);
+        MostrarTodosLosUsuarios();
     }
     
     /**
@@ -39,11 +46,7 @@ public class UsuariosTab extends javax.swing.JPanel {
         this.modoAdmin = parent.isModoAdmin();
         btnCRUDEditar.setVisible(modoAdmin);
         btnCRUDEliminar.setVisible(modoAdmin);
-        ButtonGroup btnGroup = new ButtonGroup();
-        btnGroup.add(rBtnAscendente);
-        btnGroup.add(rBtnDescendente);
-        this.usuarioController = new UsuarioController();
-        MostrarTodasLosUsuarios();
+        
     }
     
     /**
@@ -190,9 +193,10 @@ public class UsuariosTab extends javax.swing.JPanel {
      */
     private void BtnBuscarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BtnBuscarActionPerformed
         if (BarraBusqueda.getText().isEmpty()) {
-            MostrarTodasLosUsuarios();
+            MostrarTodosLosUsuarios();
+        }else{
+            FiltrarPorNombre(BarraBusqueda.getText());
         }
-        FiltrarPorNombre(BarraBusqueda.getText());
     }//GEN-LAST:event_BtnBuscarActionPerformed
 
     /**
@@ -217,7 +221,7 @@ public class UsuariosTab extends javax.swing.JPanel {
             // TODO Implementar popUp de confirmacion
             try {
                 usuarioController.eliminar(usuario.getIdUsuario());
-                MostrarTodasLosUsuarios(); // Recargar lista tras eliminación exitosa
+                MostrarTodosLosUsuarios(); // Recargar lista tras eliminación exitosa
             } catch (IllegalArgumentException e) {
                 MostrarError("Error: " + e.getMessage() + ". Inténtelo de nuevo.");
             } catch (RuntimeException e) {
@@ -246,17 +250,17 @@ public class UsuariosTab extends javax.swing.JPanel {
     private void BtnResetActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BtnResetActionPerformed
         // Seleccionar opciones por defecto
         rBtnAscendente.setSelected(true);
-        MostrarTodasLosUsuarios();
+        BarraBusqueda.setText(""); // Limpiar la barra de búsqueda
+        MostrarTodosLosUsuarios();
     }//GEN-LAST:event_BtnResetActionPerformed
 
     /**
      * Muestra todos los usuarios
      */
-    private void MostrarTodasLosUsuarios() {
+    private void MostrarTodosLosUsuarios() {
         List<Usuario> usuarios = null;
         try {
             usuarios = usuarioController.buscarTodos();
-            usuarios.sort(getComparator());
             MostrarUsuarios(usuarios);
         } catch (Exception e) {
             MostrarError(e.getMessage());
@@ -276,8 +280,6 @@ public class UsuariosTab extends javax.swing.JPanel {
                 .filter(u -> u.getNombre().toLowerCase().contains(nombre.toLowerCase()))
                 .collect(java.util.stream.Collectors.toList());
             
-            // Aplicar ordenamiento
-            usuarios.sort(getComparator());
             MostrarUsuarios(usuarios);
         } catch (Exception e) {
             MostrarError(e.getMessage());
@@ -290,11 +292,16 @@ public class UsuariosTab extends javax.swing.JPanel {
      * en la lista
      */
     public void MostrarUsuarios(List<Usuario> usuarios) {
+        if (usuarios.isEmpty()) {
+            MostrarError("No hay usuarios que mostrar");
+        }else{
         DefaultListModel<Usuario> modeloLista = new DefaultListModel<>();
+        usuarios.sort(getComparator());
         for (Usuario usuario : usuarios) {
             modeloLista.addElement(usuario);
+            }
+            AreaListaUsuarios.setModel(modeloLista);
         }
-        AreaListaUsuarios.setModel(modeloLista);
     }
 
     /**

@@ -30,31 +30,10 @@ import javax.swing.JTextArea;
  */
 public class ReseñasTab extends javax.swing.JPanel {
 
-    /*
-     * TODO - DISEÑO INTERFAZ RESEÑAS (CENTRO DE VISUALIZACIÓN):
-     * - JList o JTable para mostrar reseñas (videojuego, usuario, puntuación,
-     * comentario, útiles)
-     * - Sidebar derecho con filtros múltiples:
-     * * JComboBox para filtro por videojuego
-     * * JComboBox para filtro por usuario
-     * * JSpinner para puntuación mínima
-     * * JCheckBox "Mostrar spoilers" (usar parent.isMostrarSpoilers())
-     * - JComboBox de ordenamiento (fecha, útiles, puntuación)
-     * - JButton "Buscar" para aplicar filtros
-     * - JButton "Reset (❌)" para mostrar todas las reseñas
-     * - JButton "👍 Útil" en cada reseña para dar upvote
-     * 
-     * TODO - FUNCIONALIDAD:
-     * - Cargar reseñas con ReseñaController.buscarTodos()
-     * - Filtros: ReseñaController.buscarPorVideojuego(), buscarPorUsuario(), etc.
-     * - Implementar mostrarReseñasDeJuego() para navegación desde JuegosTab
-     * - Implementar mostrarReseñasDeUsuario() para navegación desde UsuariosTab
-     * - Upvotes: ReseñaController.marcarComoUtil()
-     * - Filtro spoilers: ocultar reseñas con spoilers si parent.isMostrarSpoilers()
-     * == false
-     * - Ordenamiento local de la lista mostrada
-     */
+    
     private ReseñaController reseñaController;
+    private VideojuegoController videojuegoController;
+    private UsuarioController usuarioController;
     private MainFrame parent;
     private boolean modoAdmin = false;
 
@@ -64,21 +43,27 @@ public class ReseñasTab extends javax.swing.JPanel {
     public ReseñasTab() {
         initComponents();
         ButtonGroup btnGroup = new ButtonGroup();
-        btnGroup.add(rBtnBuscTituloJeugo);
+        btnGroup.add(rBtnBuscTituloJuego);
         btnGroup.add(rBtnBuscUsuario);
-        btnGroup.add(rBtnBuscFecha);
+        btnGroup.add(rBtnBuscPuntuacion);
+
         ButtonGroup btnGroup2 = new ButtonGroup();
         btnGroup2.add(rBtnOrdenFecha);
         btnGroup2.add(rBtnOrdenUtiles);
-        btnGroup2.add(rBtnDescendente);
 
         ButtonGroup btnGroup3 = new ButtonGroup();
         btnGroup3.add(rBtnAscendente);
         btnGroup3.add(rBtnDescendente);
-
-        rBtnBuscTituloJeugo.setSelected(true);
+        rBtnBuscTituloJuego.setSelected(true);
         rBtnOrdenUtiles.setSelected(true);
         rBtnAscendente.setSelected(true);
+
+        this.reseñaController = new ReseñaController();
+        btnCRUDEditar.setVisible(modoAdmin);
+        btnCRUDEliminar.setVisible(modoAdmin);
+
+        videojuegoController = new VideojuegoController();
+        usuarioController = new UsuarioController();
     }
 
     /**
@@ -88,13 +73,12 @@ public class ReseñasTab extends javax.swing.JPanel {
         this();
         this.parent = parent;
         this.modoAdmin = parent.isModoAdmin();
-        reseñaController = new ReseñaController();
         btnCRUDEditar.setVisible(modoAdmin);
         btnCRUDEliminar.setVisible(modoAdmin);
         MostrarTodosLasReseñas();
+        AreaListaReseñas.setCellRenderer(new ReseñaCellRenderer());
 
         // Aplicar custom renderer para mostrar reseñas multilínea
-        AreaListaReseñas.setCellRenderer(new ReseñaCellRenderer());
     }
 
     /**
@@ -152,9 +136,9 @@ public class ReseñasTab extends javax.swing.JPanel {
         BarraBusqueda = new javax.swing.JTextField();
         BtnBuscar = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
-        rBtnBuscTituloJeugo = new javax.swing.JRadioButton();
+        rBtnBuscTituloJuego = new javax.swing.JRadioButton();
         rBtnBuscUsuario = new javax.swing.JRadioButton();
-        rBtnBuscFecha = new javax.swing.JRadioButton();
+        rBtnBuscPuntuacion = new javax.swing.JRadioButton();
         jLabel2 = new javax.swing.JLabel();
         rBtnOrdenFecha = new javax.swing.JRadioButton();
         rBtnOrdenUtiles = new javax.swing.JRadioButton();
@@ -193,11 +177,11 @@ public class ReseñasTab extends javax.swing.JPanel {
 
         jLabel1.setText("Buscar por :");
 
-        rBtnBuscTituloJeugo.setText("Titulo del juego");
+        rBtnBuscTituloJuego.setText("Titulo del juego");
 
         rBtnBuscUsuario.setText("Usuario");
 
-        rBtnBuscFecha.setText("Puntos minimos");
+        rBtnBuscPuntuacion.setText("Puntos minimos");
 
         jLabel2.setText("Ordenar por :");
 
@@ -243,9 +227,9 @@ public class ReseñasTab extends javax.swing.JPanel {
                                                 .addGroup(jPanel1Layout
                                                         .createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                                         .addComponent(jLabel1)
-                                                        .addComponent(rBtnBuscTituloJeugo)
+                                                        .addComponent(rBtnBuscTituloJuego)
                                                         .addComponent(rBtnBuscUsuario)
-                                                        .addComponent(rBtnBuscFecha)
+                                                        .addComponent(rBtnBuscPuntuacion)
                                                         .addComponent(jLabel2)
                                                         .addComponent(rBtnOrdenFecha)
                                                         .addComponent(rBtnOrdenUtiles)
@@ -295,11 +279,11 @@ public class ReseñasTab extends javax.swing.JPanel {
                                                         javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                                 .addComponent(jLabel1)
                                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                                .addComponent(rBtnBuscTituloJeugo)
+                                                .addComponent(rBtnBuscTituloJuego)
                                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                                 .addComponent(rBtnBuscUsuario)
                                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                                .addComponent(rBtnBuscFecha)
+                                                .addComponent(rBtnBuscPuntuacion)
                                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                                 .addComponent(jLabel2)
                                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -332,7 +316,7 @@ public class ReseñasTab extends javax.swing.JPanel {
 
     private void BtnResetActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_BtnResetActionPerformed
         // Seleccionar opciones por defecto
-        rBtnBuscTituloJeugo.setSelected(true);
+        rBtnBuscTituloJuego.setSelected(true);
         rBtnOrdenFecha.setSelected(true);
         rBtnAscendente.setSelected(true);
         BarraBusqueda.setText(""); // Limpiar la barra de búsqueda
@@ -347,13 +331,13 @@ public class ReseñasTab extends javax.swing.JPanel {
         if (BarraBusqueda.getText().isEmpty()) {
             MostrarTodosLasReseñas();
         }
-        if (rBtnBuscTituloJeugo.isSelected()) {
+        if (rBtnBuscTituloJuego.isSelected()) {
             FiltrarPorTitulo(BarraBusqueda.getText());
         }
         if (rBtnBuscUsuario.isSelected()) {
             FiltrarPorUsuario(BarraBusqueda.getText());
         }
-        if (rBtnBuscFecha.isSelected()) {
+        if (rBtnBuscPuntuacion.isSelected()) {
             try {
                 FiltrarPorPuntuacionMinima(Double.parseDouble(BarraBusqueda.getText()));
             } catch (NumberFormatException e) {
@@ -406,7 +390,6 @@ public class ReseñasTab extends javax.swing.JPanel {
         List<Reseña> reseñas = null;
         try {
             // Para filtros desde la barra de búsqueda, usar búsqueda parcial
-            VideojuegoController videojuegoController = new VideojuegoController();
             List<models.Videojuego> videojuegos = videojuegoController.buscarTodos();
 
             // Filtrar videojuegos que contienen el texto buscado (parcial)
@@ -439,7 +422,6 @@ public class ReseñasTab extends javax.swing.JPanel {
         List<Reseña> reseñas = null;
         try {
             // Para filtros desde la barra de búsqueda, usar búsqueda parcial
-            UsuarioController usuarioController = new UsuarioController();
             List<models.Usuario> usuarios = usuarioController.buscarTodos();
 
             // Filtrar usuarios que contienen el texto buscado (parcial)
@@ -503,6 +485,7 @@ public class ReseñasTab extends javax.swing.JPanel {
             MostrarError("No se han encontrado reseñas");
             return; // Salir para evitar sobrescribir el mensaje de error
         }
+
         if (!parent.isMostrarSpoilers()) { // si no se muestran spoilers, se filtran
             reseñas = reseñas.stream()
                     .filter(r -> !r.getSpoilers())
@@ -510,16 +493,16 @@ public class ReseñasTab extends javax.swing.JPanel {
 
             if (reseñas.isEmpty()) {
                 MostrarError("No hay reseñas que mostrar, todas son spoilers");
+                return; // Salir para evitar sobrescribir el mensaje de error
             }
-        } else {
-            DefaultListModel<Reseña> modeloLista = new DefaultListModel<>();
-            reseñas.sort(getComparator());
-            for (Reseña reseña : reseñas) {
-                modeloLista.addElement(reseña);
-            }
-
-            AreaListaReseñas.setModel(modeloLista);
         }
+
+        DefaultListModel<Reseña> modeloLista = new DefaultListModel<>();
+        reseñas.sort(getComparator());
+        for (Reseña reseña : reseñas) {
+            modeloLista.addElement(reseña);
+        }
+        AreaListaReseñas.setModel(modeloLista);
     }
 
     /**
@@ -664,8 +647,8 @@ public class ReseñasTab extends javax.swing.JPanel {
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JRadioButton rBtnAscendente;
-    private javax.swing.JRadioButton rBtnBuscFecha;
-    private javax.swing.JRadioButton rBtnBuscTituloJeugo;
+    private javax.swing.JRadioButton rBtnBuscPuntuacion;
+    private javax.swing.JRadioButton rBtnBuscTituloJuego;
     private javax.swing.JRadioButton rBtnBuscUsuario;
     private javax.swing.JRadioButton rBtnDescendente;
     private javax.swing.JRadioButton rBtnOrdenFecha;

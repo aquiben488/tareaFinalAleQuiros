@@ -4,7 +4,6 @@
  */
 package views;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.ButtonGroup;
@@ -28,6 +27,14 @@ public class CategoriasTab extends javax.swing.JPanel {
      */
     public CategoriasTab() {
         initComponents();
+        ButtonGroup btnGroup = new ButtonGroup();
+        btnGroup.add(rBtnAscendente);
+        btnGroup.add(rBtnDescendente);
+        rBtnAscendente.setSelected(true);
+        this.categoriaController = new CategoriaController();
+        btnCRUDEditar.setVisible(modoAdmin);
+        btnCRUDEliminar.setVisible(modoAdmin);
+
     }
     
     /**
@@ -39,10 +46,6 @@ public class CategoriasTab extends javax.swing.JPanel {
         this.modoAdmin = parent.isModoAdmin();
         btnCRUDEditar.setVisible(modoAdmin);
         btnCRUDEliminar.setVisible(modoAdmin);
-        ButtonGroup btnGroup = new ButtonGroup();
-        btnGroup.add(rBtnAscendente);
-        btnGroup.add(rBtnDescendente);
-        this.categoriaController = new CategoriaController();
         MostrarTodasLasCategorias();
     }
     
@@ -202,6 +205,7 @@ public class CategoriasTab extends javax.swing.JPanel {
     private void BtnResetActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BtnResetActionPerformed
         // Seleccionar opciones por defecto
         rBtnAscendente.setSelected(true);
+        BarraBusqueda.setText(""); // Limpiar la barra de búsqueda
         MostrarTodasLasCategorias();
     }//GEN-LAST:event_BtnResetActionPerformed
 
@@ -221,8 +225,9 @@ public class CategoriasTab extends javax.swing.JPanel {
     private void BtnBuscarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BtnBuscarActionPerformed
         if (BarraBusqueda.getText().isEmpty()) {
             MostrarTodasLasCategorias();
+        }else{
+            FiltrarPorNombre(BarraBusqueda.getText());
         }
-        FiltrarPorNombre(BarraBusqueda.getText());
     }//GEN-LAST:event_BtnBuscarActionPerformed
 
     /**
@@ -264,7 +269,6 @@ public class CategoriasTab extends javax.swing.JPanel {
         List<Categoria> categorias = null;
         try {
             categorias = categoriaController.buscarTodas();
-            categorias.sort(getComparator());
             MostrarCategorias(categorias);
         } catch (Exception e) {
             MostrarError(e.getMessage());
@@ -285,7 +289,6 @@ public class CategoriasTab extends javax.swing.JPanel {
                 .collect(java.util.stream.Collectors.toList());
             
             // Aplicar ordenamiento
-            categorias.sort(getComparator());
             MostrarCategorias(categorias);
         } catch (Exception e) {
             MostrarError(e.getMessage());
@@ -298,7 +301,12 @@ public class CategoriasTab extends javax.swing.JPanel {
      * en la lista
      */
     public void MostrarCategorias(List<Categoria> categorias) {
+        if (categorias.isEmpty()) {
+            MostrarError("No hay categorias que mostrar");
+            return; // Salir para evitar sobrescribir el mensaje de error
+        }
         DefaultListModel<Categoria> modeloLista = new DefaultListModel<>();
+        categorias.sort(getComparator());
         for (Categoria categoria : categorias) {
             modeloLista.addElement(categoria);
         }
