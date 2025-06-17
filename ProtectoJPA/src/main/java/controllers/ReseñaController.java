@@ -1,14 +1,13 @@
 package controllers;
 
+import java.util.List;
+
 import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityManager;
-import jakarta.persistence.TypedQuery;
 import models.Reseña;
 import models.Usuario;
 import models.Videojuego;
 import utils.PersistenceManager;
-import java.util.List;
-import java.math.BigDecimal;
 
 /**
  * La logica de los metodos es la siguiente:
@@ -282,6 +281,58 @@ public class ReseñaController {
             if (em.getTransaction().isActive()) {
                 em.getTransaction().rollback();
             }
+            em.close();
+        }
+    }
+
+    /**
+     * Método para generar estadísticas de una reseña específica
+     * Formato: Usuario - Videojuego | ⭐ X.X | 👍 X útiles | 📅 fecha
+     */
+    public String getEstadisticasReseña(Integer idReseña) {
+        EntityManager em = PersistenceManager.getEntityManager();
+        try {
+            // Buscar la reseña
+            Reseña reseña = em.find(Reseña.class, idReseña);
+            if (reseña == null) {
+                throw new IllegalArgumentException("No se ha encontrado la reseña con ese Id");
+            }
+            
+            // Construir texto con formato
+            StringBuilder texto = new StringBuilder();
+            
+            // Usuario - Videojuego
+            texto.append(reseña.getUsuario().getNombre())
+                 .append(" - ")
+                 .append(reseña.getVideojuego().getTitulo());
+            
+            // Puntuación
+            texto.append(" | ⭐ ").append(String.format("%.1f", reseña.getPuntuacion()));
+            
+            // Útiles
+            int utiles = reseña.getUtiles() != null ? reseña.getUtiles() : 0;
+            texto.append(" | 👍 ").append(utiles).append(" útil");
+            if (utiles != 1) {
+                texto.append("es");
+            }
+            
+            // Fecha
+            if (reseña.getFechaReseña() != null) {
+                texto.append(" | 📅 ").append(reseña.getFechaReseña().toString());
+            }
+            
+            // Indicador de spoilers
+            if (reseña.getSpoilers() != null && reseña.getSpoilers()) {
+                texto.append(" | ⚠️ Spoilers");
+            }
+            
+            return texto.toString();
+            
+        } catch (IllegalArgumentException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new RuntimeException("Error al obtener estadísticas de reseña: " + e.getMessage());
+        } finally {
             em.close();
         }
     }

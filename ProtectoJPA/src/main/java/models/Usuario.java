@@ -4,6 +4,10 @@
  */
 package models;
 
+import java.io.Serializable;
+import java.util.Collection;
+import java.util.Date;
+
 import jakarta.persistence.Basic;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -19,9 +23,6 @@ import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlTransient;
-import java.io.Serializable;
-import java.util.Collection;
-import java.util.Date;
 
 /**
  *
@@ -148,7 +149,14 @@ public class Usuario implements Serializable {
 
     @Override
     public String toString() {
-        return "daw.Usuarios[ idUsuario=" + idUsuario + " ]";
+        try {
+            controllers.UsuarioController controller = new controllers.UsuarioController();
+            String estadisticas = controller.getEstadisticasUsuario(this.idUsuario);
+            return this.nombre + " | " + estadisticas;
+        } catch (Exception e) {
+            // Fallback si hay error
+            return this.nombre + " | Sin datos disponibles";
+        }
     }
     
 }

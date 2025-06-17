@@ -4,6 +4,9 @@
  */
 package models;
 
+import java.io.Serializable;
+import java.time.LocalDate;
+
 import jakarta.persistence.Basic;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -17,8 +20,6 @@ import jakarta.persistence.NamedQueries;
 import jakarta.persistence.NamedQuery;
 import jakarta.persistence.Table;
 import jakarta.xml.bind.annotation.XmlRootElement;
-import java.io.Serializable;
-import java.time.LocalDate;
 
 /**
  *
@@ -185,7 +186,15 @@ public class Reseña implements Serializable {
 
     @Override
     public String toString() {
-        return "daw.Resenas[ idResena=" + idReseña + " ]";
+        try {
+            controllers.ReseñaController controller = new controllers.ReseñaController();
+            return controller.getEstadisticasReseña(this.idReseña);
+        } catch (Exception e) {
+            // Fallback si hay error
+            String usuario = (this.usuario != null) ? this.usuario.getNombre() : "Usuario desconocido";
+            String videojuego = (this.videojuego != null) ? this.videojuego.getTitulo() : "Videojuego desconocido";
+            return usuario + " - " + videojuego + " | Sin datos disponibles";
+        }
     }
     
 }
