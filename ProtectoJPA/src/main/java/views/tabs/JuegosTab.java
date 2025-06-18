@@ -114,7 +114,7 @@ public class JuegosTab extends javax.swing.JPanel {
         
         // Regresar a la pestaña apropiada según el tipo de selección
         if (esCrud != null && esCrud) {
-            parent.getTabPadre().setSelectedComponent(parent.getCrudTab());
+            parent.getTabPadre().setSelectedComponent(parent.getTabCrud());
         } else {
             parent.getTabPadre().setSelectedComponent(parent.getTabPublicar());
         }
@@ -302,6 +302,10 @@ public class JuegosTab extends javax.swing.JPanel {
         rBtnAscendente.setSelected(true);
         BarraBusqueda.setText(""); // Limpiar la barra de búsqueda
         MostrarTodosLosJuegos();
+        // Si estaba en modo selección, cancelarlo
+        if (modoSeleccion) {
+            terminarModoSeleccion();
+        }
     }// GEN-LAST:event_BtnResetActionPerformed
 
     /**
@@ -364,8 +368,11 @@ public class JuegosTab extends javax.swing.JPanel {
     private void btnCRUDEditarActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_btnCRUDEditarActionPerformed
         Videojuego videojuego = AreaListaJuegos.getSelectedValue();
         if (videojuego != null) {
-            // TODO: Implementar la funcionalidad de editar un videojuego
-            // parent.irAEditarJuego(videojuego);
+            // Navegar al CrudTab y cargar los datos del videojuego
+            parent.getTabPadre().setSelectedComponent(parent.getTabCrud());
+            parent.getCrudTab().cargarVideojuego(videojuego);
+        } else {
+            MostrarError("Selecciona un videojuego para editar");
         }
     }// GEN-LAST:event_btnCRUDEditarActionPerformed
 
@@ -376,7 +383,13 @@ public class JuegosTab extends javax.swing.JPanel {
     private void btnCRUDEliminarActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_btnCRUDEliminarActionPerformed
         Videojuego videojuego = AreaListaJuegos.getSelectedValue();
         if (videojuego != null) {
-            // TODO Implementar popUp de confirmacion
+            int res = JOptionPane.showConfirmDialog(this,
+                    "¿Seguro que deseas eliminar el videojuego '" + videojuego.getTitulo() + "'?",
+                    "Confirmar eliminación",
+                    JOptionPane.YES_NO_OPTION);
+            if (res != JOptionPane.YES_OPTION) {
+                return;
+            }
             try {
                 videojuegoController.eliminar(videojuego.getIdVideojuego());
                 

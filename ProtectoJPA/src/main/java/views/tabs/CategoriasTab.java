@@ -8,6 +8,7 @@ import java.util.List;
 
 import javax.swing.ButtonGroup;
 import javax.swing.DefaultListModel;
+import javax.swing.JOptionPane;
 
 import controllers.CategoriaController;
 import models.Categoria;
@@ -22,6 +23,9 @@ public class CategoriasTab extends javax.swing.JPanel {
     private MainFrame parent;
     private boolean modoAdmin = false;
     private CategoriaController categoriaController;
+
+    // Variables para modo selección básico
+    private boolean modoSeleccion = false;
     
     /**
      * Creates new form CategoriasTab
@@ -35,7 +39,7 @@ public class CategoriasTab extends javax.swing.JPanel {
         this.categoriaController = new CategoriaController();
         btnCRUDEditar.setVisible(modoAdmin);
         btnCRUDEliminar.setVisible(modoAdmin);
-
+        this.modoSeleccion = false;
     }
     
     /**
@@ -55,8 +59,32 @@ public class CategoriasTab extends javax.swing.JPanel {
      */
     public void actualizarModoAdmin(boolean modoAdmin) {
         this.modoAdmin = modoAdmin;
+        if (!modoSeleccion) {
+            btnCRUDEditar.setVisible(modoAdmin);
+            btnCRUDEliminar.setVisible(modoAdmin);
+        }
+    }
+
+    /**
+     * Activa/desactiva el modo selección para CRUD
+     */
+    public void modoSeleccion() {
+        this.modoSeleccion = true;
+        btnCRUDEditar.setVisible(false);
+        btnCRUDEliminar.setVisible(false);
+    }
+    
+    /**
+     * Termina el modo selección
+     */
+    public void terminarModoSeleccion() {
         btnCRUDEditar.setVisible(modoAdmin);
         btnCRUDEliminar.setVisible(modoAdmin);
+        
+        // Volver a CrudTab
+        parent.getTabPadre().setSelectedComponent(parent.getTabCrud());
+        
+        this.modoSeleccion = false;
     }
 
     /**
@@ -193,26 +221,35 @@ public class CategoriasTab extends javax.swing.JPanel {
     private void AreaListaCategoriasMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_AreaListaCategoriasMouseClicked
         if (evt.getClickCount() == 2) { // Doble clic
             Categoria categoria = AreaListaCategorias.getSelectedValue();
-            if (categoria != null) {
-                parent.irAJuegosDeCategoria(categoria);
+            if (modoSeleccion) {
+                // Seleccionar categoría para CRUD y volver
+                parent.getCrudTab().setCategoria(categoria);
+                this.terminarModoSeleccion();
+            } else {
+                if (categoria != null) {
+                    parent.irAJuegosDeCategoria(categoria);
+                }
             }
         }
     }//GEN-LAST:event_AreaListaCategoriasMouseClicked
 
     /**
-     * Selecciona las opciones por defecto
-     * y muestra todas las categorias
+     * Selecciona opciones por defecto
+     * y muestra todas las categorías
      */
     private void BtnResetActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BtnResetActionPerformed
         // Seleccionar opciones por defecto
         rBtnAscendente.setSelected(true);
-        BarraBusqueda.setText(""); // Limpiar la barra de búsqueda
+        BarraBusqueda.setText(""); // Limpiar barra de búsqueda
         MostrarTodasLasCategorias();
+        if (modoSeleccion) {
+            terminarModoSeleccion();
+        }
     }//GEN-LAST:event_BtnResetActionPerformed
 
     /**
-     * Hace click en el boton buscar
-     * (hacer enter es igual a hacer click en el boton buscar)
+     * Hace clic en el botón buscar
+     * (presionar enter es igual a hacer clic en el botón buscar)
      */
     private void BarraBusquedaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BarraBusquedaActionPerformed
         BtnBuscarActionPerformed(evt);
@@ -238,8 +275,11 @@ public class CategoriasTab extends javax.swing.JPanel {
     private void btnCRUDEditarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCRUDEditarActionPerformed
         Categoria categoria = AreaListaCategorias.getSelectedValue();
         if (categoria != null) {
-            // TODO: Implementar la funcionalidad de editar una categoria
-            //parent.irAEditarCategoria(categoria);
+            // Navigate to CrudTab and load category data
+            parent.getTabPadre().setSelectedComponent(parent.getTabCrud());
+            parent.getCrudTab().cargarCategoria(categoria);
+        } else {
+            MostrarError("Selecciona una categoría para editar");
         }
     }//GEN-LAST:event_btnCRUDEditarActionPerformed
 
@@ -250,7 +290,13 @@ public class CategoriasTab extends javax.swing.JPanel {
     private void btnCRUDEliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCRUDEliminarActionPerformed
         Categoria categoria = AreaListaCategorias.getSelectedValue();
         if (categoria != null) {
-            // TODO Implementar popUp de confirmacion
+            int res = JOptionPane.showConfirmDialog(this,
+                    "¿Seguro que deseas eliminar la categoría '" + categoria.getNombre() + "'?",
+                    "Confirmar eliminación",
+                    JOptionPane.YES_NO_OPTION);
+            if (res != JOptionPane.YES_OPTION) {
+                return; // Cancelado
+            }
             try {
                 categoriaController.eliminar(categoria.getIdCategoria());
                 

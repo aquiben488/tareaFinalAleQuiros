@@ -8,6 +8,7 @@ import java.util.List;
 
 import javax.swing.ButtonGroup;
 import javax.swing.DefaultListModel;
+import javax.swing.JOptionPane;
 
 import controllers.UsuarioController;
 import models.Usuario;
@@ -22,6 +23,9 @@ public class UsuariosTab extends javax.swing.JPanel {
     private MainFrame parent;
     private boolean modoAdmin = false;
     private UsuarioController usuarioController;
+    
+    // Variables para modo selección básico
+    private boolean modoSeleccion = false;
 
     /**
      * Creates new form UsuariosTab
@@ -55,8 +59,32 @@ public class UsuariosTab extends javax.swing.JPanel {
      */
     public void actualizarModoAdmin(boolean modoAdmin) {
         this.modoAdmin = modoAdmin;
+        if (!modoSeleccion) {
+            btnCRUDEditar.setVisible(modoAdmin);
+            btnCRUDEliminar.setVisible(modoAdmin);
+        }
+    }
+    
+    /**
+     * Activa/desactiva el modo selección para CRUD
+     */
+    public void modoSeleccion() {
+        this.modoSeleccion = true;
+        btnCRUDEditar.setVisible(false);
+        btnCRUDEliminar.setVisible(false);
+    }
+    
+    /**
+     * Termina el modo selección
+     */
+    public void terminarModoSeleccion() {
         btnCRUDEditar.setVisible(modoAdmin);
         btnCRUDEliminar.setVisible(modoAdmin);
+        
+        // Volver a CrudTab
+        parent.getTabPadre().setSelectedComponent(parent.getTabCrud());
+        
+        this.modoSeleccion = false;
     }
 
     /**
@@ -207,8 +235,11 @@ public class UsuariosTab extends javax.swing.JPanel {
     private void btnCRUDEditarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCRUDEditarActionPerformed
         Usuario usuario = AreaListaUsuarios.getSelectedValue();
         if (usuario != null) {
-            // TODO: Implementar la funcionalidad de editar un usuario
-            //parent.irAEditarUsuario(usuario);
+            // Navegar a CrudTab y cargar datos del usuario
+            parent.getTabPadre().setSelectedComponent(parent.getTabCrud());
+            parent.getCrudTab().cargarUsuario(usuario);
+        } else {
+            MostrarError("Selecciona un usuario para editar");
         }
     }//GEN-LAST:event_btnCRUDEditarActionPerformed
 
@@ -219,7 +250,13 @@ public class UsuariosTab extends javax.swing.JPanel {
     private void btnCRUDEliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCRUDEliminarActionPerformed
         Usuario usuario = AreaListaUsuarios.getSelectedValue();
         if (usuario != null) {
-            // TODO Implementar popUp de confirmacion
+            int res = JOptionPane.showConfirmDialog(this,
+                    "¿Seguro que deseas eliminar al usuario '" + usuario.getNombre() + "'?",
+                    "Confirmar eliminación",
+                    JOptionPane.YES_NO_OPTION);
+            if (res != JOptionPane.YES_OPTION) {
+                return;
+            }
             try {
                 usuarioController.eliminar(usuario.getIdUsuario());
                 
@@ -242,8 +279,14 @@ public class UsuariosTab extends javax.swing.JPanel {
     private void AreaListaUsuariosMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_AreaListaUsuariosMouseClicked
         if (evt.getClickCount() == 2) { // Doble clic
             Usuario usuario = AreaListaUsuarios.getSelectedValue();
-            if (usuario != null) {
-                parent.irAReseñasDeUsuario(usuario);
+            if (modoSeleccion) {
+                // Seleccionar usuario para CRUD y volver
+                parent.getCrudTab().setUsuario(usuario);
+                this.terminarModoSeleccion();
+            } else {
+                if (usuario != null) {
+                    parent.irAReseñasDeUsuario(usuario);
+                }
             }
         }
     }//GEN-LAST:event_AreaListaUsuariosMouseClicked
@@ -257,6 +300,9 @@ public class UsuariosTab extends javax.swing.JPanel {
         rBtnAscendente.setSelected(true);
         BarraBusqueda.setText(""); // Limpiar la barra de búsqueda
         MostrarTodosLosUsuarios();
+        if (modoSeleccion) {
+            terminarModoSeleccion();
+        }
     }//GEN-LAST:event_BtnResetActionPerformed
 
     /**

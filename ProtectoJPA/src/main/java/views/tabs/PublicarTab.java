@@ -272,10 +272,27 @@ public class PublicarTab extends javax.swing.JPanel {
             videojuego = null;
             
         } catch (IllegalArgumentException e) {
-            if (e.getMessage() != null && !e.getMessage().contains("Duplicate entry")) {
-                MostrarError("Error: " + e.getMessage());
+            // Verificar si es error de reseña duplicada
+            if (e.getMessage() != null && 
+                (e.getMessage().contains("Ya existe una reseña") || 
+                 e.getMessage().contains("Duplicate entry"))) {
+                
+                // PopUp de confirmación para actualizar reseña existente
+                int opcion = JOptionPane.showConfirmDialog(
+                    this, 
+                    "Ya tienes una reseña para este videojuego.\n¿Quieres sobreescribir tu reseña anterior?",
+                    "Reseña ya existe", 
+                    JOptionPane.YES_NO_OPTION,
+                    JOptionPane.QUESTION_MESSAGE
+                );
+                
+                if (opcion == JOptionPane.YES_OPTION) {
+                    actualizarReseñaExistente();
+                }
+                // Si es NO_OPTION, no hacer nada (mantener formulario como está)
             } else {
-                // TODO: mostrar popUP de actualizar
+                // Otros errores de validación
+                MostrarError("Error: " + e.getMessage());
             }
         } catch (Exception e) {
             MostrarError("Error del sistema: " + e.getMessage());
@@ -320,6 +337,61 @@ public class PublicarTab extends javax.swing.JPanel {
         
         // Actualizar ReseñasTab (nueva reseña debe aparecer)
         parent.getReseñasTab().actualizarTrasCrud();
+    }
+    
+    /**
+     * Actualiza la reseña existente del usuario para el videojuego seleccionado
+     */
+    private void actualizarReseñaExistente() {
+        try {
+            // Buscar las reseñas del usuario y filtrar por videojuego
+            java.util.List<Reseña> reseñasUsuario = reseñaController.buscarPorUsuario(parent.getUsuarioLogueado());
+            
+            Reseña reseñaExistente = null;
+            for (Reseña reseña : reseñasUsuario) {
+                if (reseña.getVideojuego().getIdVideojuego().equals(videojuego.getIdVideojuego())) {
+                    reseñaExistente = reseña;
+                    break;
+                }
+            }
+            
+            if (reseñaExistente != null) {
+                // Actualizar con los nuevos datos del formulario
+                try {
+                    double puntuacion = Double.parseDouble(txtPuntuacion.getText().trim());
+                    reseñaExistente.setPuntuacion(puntuacion);
+                } catch (NumberFormatException e) {
+                    MostrarError("La puntuación debe ser un número válido");
+                    return;
+                }
+                
+                reseñaExistente.setComentario(txtAreaComentario.getText().trim());
+                reseñaExistente.setSpoilers(tBtnSpoilers.isSelected());
+                reseñaExistente.setFechaReseña(java.time.LocalDate.now());
+                
+                // Actualizar en base de datos
+                reseñaController.actualizar(reseñaExistente);
+                
+                JOptionPane.showMessageDialog(null, "Reseña actualizada correctamente");
+                
+                // Actualizar pestañas relacionadas
+                actualizarTrasCrud();
+                
+                // Limpiar formulario tras éxito
+                txtAreaComentario.setText("");
+                txtPuntuacion.setText("");
+                tBtnSpoilers.setSelected(false);
+                tBtnSpoilers.setText("No");
+                txtVideojuego.setText("");
+                videojuego = null;
+                
+            } else {
+                MostrarError("No se pudo encontrar la reseña existente");
+            }
+            
+        } catch (Exception e) {
+            MostrarError("Error al actualizar la reseña: " + e.getMessage());
+        }
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

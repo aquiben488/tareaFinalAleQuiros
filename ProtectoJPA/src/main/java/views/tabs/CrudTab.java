@@ -4,40 +4,55 @@
  */
 package views.tabs;
 
+import controllers.CategoriaController;
+import controllers.ReseñaController;
+import controllers.UsuarioController;
+import controllers.VideojuegoController;
+import models.Categoria;
+import models.Reseña;
+import models.Usuario;
+import models.Videojuego;
 import views.MainFrame;
 
+import javax.swing.*;
+import java.awt.*;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 /**
- *
+ * Pestaña CRUD dinámica que permite crear y actualizar entidades
+ * según la selección del ComboBox
  * @author ale
  */
 public class CrudTab extends javax.swing.JPanel {
 
-    /*
-     * TODO - DISEÑO INTERFAZ CRUD (SOLO VISIBLE EN MODO ADMIN):
-     * - JTabbedPane interno con 4 pestañas:
-     *   * "Categorías CRUD"
-     *   * "Videojuegos CRUD" 
-     *   * "Usuarios CRUD"
-     *   * "Reseñas CRUD"
-     * 
-     * TODO - CADA PESTAÑA INTERNA DEBE TENER:
-     * - JTable para mostrar datos existentes
-     * - Formulario de creación/edición con campos apropiados
-     * - JButton "Crear" para agregar nueva entidad
-     * - JButton "Actualizar" para modificar entidad seleccionada
-     * - JButton "Eliminar" para borrar entidad seleccionada
-     * - Validaciones de campos requeridos
-     * 
-     * TODO - FUNCIONALIDAD POR ENTIDAD:
-     * - Categorías: CategoriaController (crear, actualizar, eliminar, buscarTodos)
-     * - Videojuegos: VideojuegoController (crear, actualizar, eliminar, buscarTodos)
-     * - Usuarios: UsuarioController (crear, actualizar, eliminar, buscarTodos)
-     * - Reseñas: ReseñaController (crear, actualizar, eliminar, buscarTodos)
-     * - Refrescar tabla después de cada operación CRUD
-     * - Mostrar mensajes de éxito/error
-     */
-
     private MainFrame parent;
+    
+    // Map para guardar referencias a los campos dinámicos
+    private Map<String, JComponent> mapaCampos = new HashMap<>();
+    
+    // Controladores para las operaciones CRUD
+    private CategoriaController categoriaController = new CategoriaController();
+    private UsuarioController usuarioController = new UsuarioController();
+    private VideojuegoController videojuegoController = new VideojuegoController();
+    private ReseñaController reseñaController = new ReseñaController();
+    
+    // Variables para almacenar las entidades seleccionadas para actualización
+    private Categoria categoriaSeleccionada;
+    private Usuario usuarioSeleccionado;
+    private Videojuego videojuegoSeleccionado;
+    private Reseña reseñaSeleccionada;
+    
+    // Variables para almacenar las relaciones seleccionadas
+    private Categoria categoriaRelacion;
+    private Usuario usuarioRelacion;
+    private Videojuego videojuegoRelacion;
 
     /**
      * Creates new form CrudTab
@@ -45,13 +60,12 @@ public class CrudTab extends javax.swing.JPanel {
     public CrudTab() {
         initComponents();
     }
-    
-    /**
-     * Constructor con referencia al MainFrame padre
-     */
+
     public CrudTab(MainFrame parent) {
         this();
         this.parent = parent;
+        inicializarEventos();
+        generarCamposDinamicos(); // Cargar campos iniciales
     }
 
     /**
@@ -63,19 +77,907 @@ public class CrudTab extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jPanel1 = new javax.swing.JPanel();
+        jLabel1 = new javax.swing.JLabel();
+        cbModelos = new javax.swing.JComboBox<>();
+        panelCrud = new javax.swing.JPanel();
+        btnCrear = new javax.swing.JButton();
+        btnActualizar = new javax.swing.JButton();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        txtAreaErrores = new javax.swing.JTextArea();
+
+        jPanel1.setPreferredSize(new java.awt.Dimension(626, 376));
+
+        jLabel1.setText("Selecciona la entidad: ");
+
+        cbModelos.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Categoria", "Usuario", "Videojuego", "Reseña" }));
+
+        javax.swing.GroupLayout panelCrudLayout = new javax.swing.GroupLayout(panelCrud);
+        panelCrud.setLayout(panelCrudLayout);
+        panelCrudLayout.setHorizontalGroup(
+            panelCrudLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 342, Short.MAX_VALUE)
+        );
+        panelCrudLayout.setVerticalGroup(
+            panelCrudLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 315, Short.MAX_VALUE)
+        );
+
+        btnCrear.setText("Crear Nuevo");
+        btnCrear.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCrearActionPerformed(evt);
+            }
+        });
+
+        btnActualizar.setText("Actualizar");
+        btnActualizar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnActualizarActionPerformed(evt);
+            }
+        });
+
+        txtAreaErrores.setEditable(false);
+        txtAreaErrores.setColumns(20);
+        txtAreaErrores.setRows(5);
+        jScrollPane1.setViewportView(txtAreaErrores);
+
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGap(32, 32, 32)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel1)
+                    .addComponent(btnCrear)
+                    .addComponent(btnActualizar)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(cbModelos, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(panelCrud, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGap(18, 18, 18)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(panelCrud, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addContainerGap(43, Short.MAX_VALUE))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(jLabel1)
+                        .addGap(18, 18, 18)
+                        .addComponent(cbModelos, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(btnCrear)
+                        .addGap(18, 18, 18)
+                        .addComponent(btnActualizar)
+                        .addGap(50, 50, 50)
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 126, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(31, 31, 31))))
+        );
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 400, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 300, Short.MAX_VALUE)
+            .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
     }// </editor-fold>//GEN-END:initComponents
 
+    private void btnCrearActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCrearActionPerformed
+        try {
+            String entidadSeleccionada = (String) cbModelos.getSelectedItem();
+            
+            switch (entidadSeleccionada) {
+                case "Categoria" -> crearCategoria();
+                case "Usuario" -> crearUsuario();
+                case "Videojuego" -> crearVideojuego();
+                case "Reseña" -> crearReseña();
+            }
+            
+        } catch (IllegalArgumentException e) {
+            mostrarError("Error en los datos: " + e.getMessage());
+        } catch (Exception e) {
+            mostrarError("Error del sistema: " + e.getMessage());
+        }
+    }//GEN-LAST:event_btnCrearActionPerformed
+
+    private void btnActualizarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnActualizarActionPerformed
+        try {
+            String entidadSeleccionada = (String) cbModelos.getSelectedItem();
+            
+            switch (entidadSeleccionada) {
+                case "Categoria" -> actualizarCategoria();
+                case "Usuario" -> actualizarUsuario();
+                case "Videojuego" -> actualizarVideojuego();
+                case "Reseña" -> actualizarReseña();
+            }
+            
+        } catch (IllegalArgumentException e) {
+            mostrarError("Error en los datos: " + e.getMessage());
+        } catch (Exception e) {
+            mostrarError("Error del sistema: " + e.getMessage());
+        }
+    }//GEN-LAST:event_btnActualizarActionPerformed
+
+    /**
+     * Inicializa los eventos de los componentes
+     */
+    private void inicializarEventos() {
+        // Evento para cambio de entidad en ComboBox
+        cbModelos.addActionListener(e -> generarCamposDinamicos());
+    }
+    
+    /**
+     * Genera los campos dinámicos según la entidad seleccionada
+     */
+    private void generarCamposDinamicos() {
+        // Limpiar campos anteriores
+        panelCrud.removeAll();
+        mapaCampos.clear();
+        
+        // Obtener entidad seleccionada
+        String entidadSeleccionada = (String) cbModelos.getSelectedItem();
+        
+        // Configurar layout del panel
+        panelCrud.setLayout(new GridBagLayout());
+        
+        // Generar campos según la entidad
+        switch (entidadSeleccionada) {
+            case "Categoria" -> crearCamposCategoria();
+            case "Usuario" -> crearCamposUsuario();
+            case "Videojuego" -> crearCamposVideojuego();
+            case "Reseña" -> crearCamposReseña();
+        }
+        
+        // Refrescar la interfaz
+        panelCrud.revalidate();
+        panelCrud.repaint();
+    }
+    
+    /**
+     * Crea los campos para la entidad Categoria
+     * otra cosa que ha hecho claude
+     */
+    private void crearCamposCategoria() {
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(5, 5, 5, 5);
+        gbc.anchor = GridBagConstraints.WEST;
+        
+        // Campo Nombre
+        JTextField txtNombre = new JTextField(20);
+        agregarCampo("Nombre:", txtNombre, gbc, 0);
+    }
+    
+    /**
+     * Crea los campos para la entidad Usuario
+     */
+    private void crearCamposUsuario() {
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(5, 5, 5, 5);
+        gbc.anchor = GridBagConstraints.WEST;
+        
+        // Campos del usuario
+        agregarCampo("Nombre:", new JTextField(20), gbc, 0);
+        agregarCampo("Email:", new JTextField(20), gbc, 1);
+        agregarCampo("Contraseña:", new JTextField(20), gbc, 2);
+    }
+    
+    /**
+     * Crea los campos para la entidad Videojuego
+     */
+    private void crearCamposVideojuego() {
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(5, 5, 5, 5);
+        gbc.anchor = GridBagConstraints.WEST;
+        
+        // Campos del videojuego
+        agregarCampo("Título:", new JTextField(20), gbc, 0);
+        
+        // Descripción con área de texto
+        JTextArea txtDescripcion = new JTextArea(3, 20);
+        txtDescripcion.setLineWrap(true);
+        txtDescripcion.setWrapStyleWord(true);
+        JScrollPane scrollDescripcion = new JScrollPane(txtDescripcion);
+        agregarCampo("Descripción:", scrollDescripcion, gbc, 1);
+        
+        // Selector de fecha de lanzamiento
+        JSpinner spinnerFecha = new JSpinner(new SpinnerDateModel());
+        JSpinner.DateEditor dateEditor = new JSpinner.DateEditor(spinnerFecha, "dd/MM/yyyy");
+        spinnerFecha.setEditor(dateEditor);
+        spinnerFecha.setPreferredSize(new Dimension(150, 25));
+        agregarCampo("Fecha Lanzamiento:", spinnerFecha, gbc, 2);
+        
+        // Campo para mostrar categoría seleccionada
+        JTextField txtCategoriaSeleccionada = new JTextField(20);
+        txtCategoriaSeleccionada.setEditable(false);
+        agregarCampo("Categoría:", txtCategoriaSeleccionada, gbc, 3);
+        
+        // Botón para seleccionar categoría
+        JButton btnSeleccionarCategoria = new JButton("Seleccionar Categoría");
+        btnSeleccionarCategoria.setPreferredSize(new Dimension(180, 25));
+        btnSeleccionarCategoria.addActionListener(e -> seleccionarCategoria());
+        agregarCampo("btnSelCat", btnSeleccionarCategoria, gbc, 4);
+    }
+    
+    /**
+     * Crea los campos para la entidad Reseña
+     */
+    private void crearCamposReseña() {
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(5, 5, 5, 5);
+        gbc.anchor = GridBagConstraints.WEST;
+        
+        // Campos de la reseña
+        JTextField txtPuntuacion = new JTextField(20);
+        txtPuntuacion.setToolTipText("Puntuación entre 0.0 y 10.0");
+        agregarCampo("Puntuación:", txtPuntuacion, gbc, 0);
+        
+        // Comentario con área de texto
+        JTextArea txtComentario = new JTextArea(4, 20);
+        txtComentario.setLineWrap(true);
+        txtComentario.setWrapStyleWord(true);
+        JScrollPane scrollComentario = new JScrollPane(txtComentario);
+        agregarCampo("Comentario:", scrollComentario, gbc, 1);
+        
+        // Checkbox spoilers
+        JCheckBox chkSpoilers = new JCheckBox();
+        agregarCampo("Contiene Spoilers:", chkSpoilers, gbc, 2);
+        
+        // Campo para mostrar usuario seleccionado
+        JTextField txtUsuarioSeleccionado = new JTextField(20);
+        txtUsuarioSeleccionado.setEditable(false);
+        agregarCampo("Usuario:", txtUsuarioSeleccionado, gbc, 3);
+        
+        // Botón para seleccionar usuario
+        JButton btnSeleccionarUsuario = new JButton("Seleccionar Usuario");
+        btnSeleccionarUsuario.setPreferredSize(new Dimension(180, 25));
+        btnSeleccionarUsuario.addActionListener(e -> seleccionarUsuario());
+        agregarCampo("btnSelUsuario", btnSeleccionarUsuario, gbc, 4);
+        
+        // Campo para mostrar videojuego seleccionado
+        JTextField txtVideojuegoSeleccionado = new JTextField(20);
+        txtVideojuegoSeleccionado.setEditable(false);
+        agregarCampo("Videojuego:", txtVideojuegoSeleccionado, gbc, 5);
+        
+        // Botón para seleccionar videojuego
+        JButton btnSeleccionarVideojuego = new JButton("Seleccionar Videojuego");
+        btnSeleccionarVideojuego.setPreferredSize(new Dimension(180, 25));
+        btnSeleccionarVideojuego.addActionListener(e -> seleccionarVideojuego());
+        agregarCampo("btnSelVideojuego", btnSeleccionarVideojuego, gbc, 6);
+    }
+    
+    /**
+     * Método helper para agregar un campo al panel con su etiqueta
+     */
+    private void agregarCampo(String etiqueta, JComponent campo, GridBagConstraints gbc, int fila) {
+        // Agregar etiqueta
+        gbc.gridx = 0;
+        gbc.gridy = fila;
+        gbc.fill = GridBagConstraints.NONE;
+        panelCrud.add(new JLabel(etiqueta), gbc);
+        
+        // Agregar campo
+        gbc.gridx = 1;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        panelCrud.add(campo, gbc);
+        
+        // Guardar referencia en el mapa
+        mapaCampos.put(etiqueta, campo);
+    }
+    
+    
+    /**
+     * Muestra un mensaje de error en el área de texto
+     */
+    private void mostrarError(String mensaje) {
+        txtAreaErrores.setText(mensaje);
+        txtAreaErrores.setForeground(Color.RED);
+    }
+    
+    /**
+     * Muestra un mensaje de éxito en el área de texto
+     */
+    private void mostrarExito(String mensaje) {
+        txtAreaErrores.setText(mensaje);
+        txtAreaErrores.setForeground(Color.GREEN.darker());
+    }
+
+    /**
+     * Crea una nueva categoría
+     */
+    private void crearCategoria() {
+        String nombre = obtenerTexto("Nombre:");
+        
+        if (nombre.trim().isEmpty()) {
+            mostrarError("El nombre no puede estar vacío");
+            return;
+        }
+        
+        // Crear nueva categoría
+        Categoria categoria = new Categoria();
+        categoria.setNombre(nombre);
+        
+        // Guardar en base de datos
+        categoriaController.crear(categoria);
+        
+        mostrarExito("Categoría creada exitosamente");
+        limpiarCampos();
+        
+        // Actualizar pestañas relacionadas
+        parent.getCategoriasTab().actualizarTrasCrud();
+        parent.getJuegosTab().actualizarTrasCrud();
+        parent.getReseñasTab().actualizarTrasCrud();
+    }
+    
+    /**
+     * Actualiza una categoría existente
+     */
+    private void actualizarCategoria() {
+        String nombre = obtenerTexto("Nombre:");
+        
+        if (categoriaSeleccionada == null) {
+            mostrarError("Debes seleccionar una categoría para actualizar");
+            return;
+        }
+        if (nombre.trim().isEmpty()) {
+            mostrarError("El nombre no puede estar vacío");
+            return;
+        }
+        
+        // Actualizar categoría
+        categoriaSeleccionada.setNombre(nombre.trim());
+        
+        // Guardar en base de datos
+        categoriaController.actualizar(categoriaSeleccionada);
+        
+        mostrarExito("Categoría actualizada exitosamente");
+        limpiarCampos();
+        
+        // Actualizar pestañas relacionadas
+        parent.getCategoriasTab().actualizarTrasCrud();
+        parent.getJuegosTab().actualizarTrasCrud();
+        parent.getReseñasTab().actualizarTrasCrud();
+    }
+    
+    /**
+     * Crea un nuevo usuario
+     */
+    private void crearUsuario() {
+        String nombre = obtenerTexto("Nombre:");
+        String email = obtenerTexto("Email:");
+        String contraseña = obtenerTexto("Contraseña:");
+        
+        if (nombre.trim().isEmpty() || email.trim().isEmpty() || contraseña.trim().isEmpty()) {
+            mostrarError("Todos los campos son obligatorios");
+            return;
+        }
+        
+        // Crear nuevo usuario
+        Usuario usuario = new Usuario();
+        usuario.setNombre(nombre.trim());
+        usuario.setEmail(email.trim());
+        usuario.setContraseña(contraseña.trim());
+        usuario.setFechaRegistro(LocalDate.now());
+        
+        // Guardar en base de datos
+        usuarioController.crear(usuario);
+        
+        mostrarExito("Usuario creado exitosamente");
+        limpiarCampos();
+        
+        // Actualizar pestañas relacionadas
+        parent.getUsuariosTab().actualizarTrasCrud();
+        parent.getReseñasTab().actualizarTrasCrud();
+    }
+    
+    /**
+     * Actualiza un usuario existente
+     */
+    private void actualizarUsuario() {
+        String nombre = obtenerTexto("Nombre:");
+        String email = obtenerTexto("Email:");
+        String contraseña = obtenerTexto("Contraseña:");
+        
+        if (usuarioSeleccionado == null) {
+            mostrarError("Debes seleccionar un usuario para actualizar");
+            return;
+        }
+        if (nombre.trim().isEmpty() || email.trim().isEmpty() || contraseña.trim().isEmpty()) {
+            mostrarError("Todos los campos son obligatorios");
+            return;
+        }
+        
+        // Actualizar usuario
+        usuarioSeleccionado.setNombre(nombre.trim());
+        usuarioSeleccionado.setEmail(email.trim());
+        usuarioSeleccionado.setContraseña(contraseña.trim());
+        
+        // Guardar en base de datos
+        usuarioController.actualizar(usuarioSeleccionado);
+        
+        mostrarExito("Usuario actualizado exitosamente");
+        limpiarCampos();
+        
+        // Actualizar pestañas relacionadas
+        parent.getUsuariosTab().actualizarTrasCrud();
+        parent.getReseñasTab().actualizarTrasCrud();
+    }
+    
+    /**
+     * Crea un nuevo videojuego
+     */
+    private void crearVideojuego() {
+        String titulo = obtenerTexto("Título:");
+        String descripcion = obtenerTextoArea("Descripción:");
+        LocalDate fechaLanzamiento = obtenerFecha("Fecha Lanzamiento:");
+        
+        if (titulo.trim().isEmpty()) {
+            mostrarError("El título es obligatorio");
+            return;
+        }
+        if (categoriaRelacion == null) {
+            mostrarError("Debe seleccionar una categoría");
+            return;
+        }
+        
+        // Crear nuevo videojuego
+        Videojuego videojuego = new Videojuego();
+        videojuego.setTitulo(titulo.trim());
+        videojuego.setDescripcion(descripcion.trim());
+        videojuego.setCategoria(categoriaRelacion);
+        videojuego.setFechaLanzamiento(fechaLanzamiento);
+        
+        // Guardar en base de datos
+        videojuegoController.crear(videojuego);
+        
+        mostrarExito("Videojuego creado exitosamente");
+        limpiarCampos();
+        
+        // Actualizar pestañas relacionadas
+        parent.getCategoriasTab().actualizarTrasCrud();
+        parent.getJuegosTab().actualizarTrasCrud();
+        parent.getReseñasTab().actualizarTrasCrud();
+    }
+    
+    /**
+     * Actualiza un videojuego existente
+     */
+    private void actualizarVideojuego() {
+        String titulo = obtenerTexto("Título:");
+        String descripcion = obtenerTextoArea("Descripción:");
+        LocalDate fechaLanzamiento = obtenerFecha("Fecha Lanzamiento:");
+        
+        if (videojuegoSeleccionado == null) {
+            mostrarError("Debes seleccionar un videojuego para actualizar");
+            return;
+        }
+        if (titulo.trim().isEmpty()) {
+            mostrarError("El título es obligatorio");
+            return;
+        }
+        if (categoriaRelacion == null) {
+            // Si el usuario no cambió la categoría, mantener la existente
+            categoriaRelacion = videojuegoSeleccionado.getCategoria();
+        }
+        
+        // Actualizar videojuego
+        videojuegoSeleccionado.setTitulo(titulo.trim());
+        videojuegoSeleccionado.setDescripcion(descripcion.trim());
+        videojuegoSeleccionado.setCategoria(categoriaRelacion);
+        videojuegoSeleccionado.setFechaLanzamiento(fechaLanzamiento);
+        
+        // Guardar en base de datos
+        videojuegoController.actualizar(videojuegoSeleccionado);
+        
+        mostrarExito("Videojuego actualizado exitosamente");
+        limpiarCampos();
+        
+        // Actualizar pestañas relacionadas
+        parent.getCategoriasTab().actualizarTrasCrud();
+        parent.getJuegosTab().actualizarTrasCrud();
+        parent.getReseñasTab().actualizarTrasCrud();
+    }
+    
+    /**
+     * Crea una nueva reseña
+     */
+    private void crearReseña() {
+        try {
+            // Obtener valores de los campos
+            String puntuacionStr = obtenerTexto("Puntuación:");
+            String comentario = obtenerTextoArea("Comentario:");
+            boolean spoilers = obtenerCheckBox("Contiene Spoilers:");
+            
+            // Validaciones básicas
+            if (puntuacionStr.trim().isEmpty() || comentario.trim().isEmpty()) {
+                mostrarError("Puntuación y comentario son obligatorios");
+                return;
+            }
+            
+            if (usuarioRelacion == null || videojuegoRelacion == null) {
+                mostrarError("Debe seleccionar un usuario y un videojuego");
+                return;
+            }
+            
+            // Validar puntuación
+            double puntuacion = Double.parseDouble(puntuacionStr);
+            if (puntuacion < 0.0 || puntuacion > 10.0) {
+                mostrarError("La puntuación debe estar entre 0.0 y 10.0");
+                return;
+            }
+            
+            // Crear nueva reseña
+            Reseña reseña = new Reseña();
+            reseña.setPuntuacion(puntuacion);
+            reseña.setComentario(comentario);
+            reseña.setSpoilers(spoilers);
+            reseña.setUsuario(usuarioRelacion);
+            reseña.setVideojuego(videojuegoRelacion);
+            reseña.setFechaReseña(LocalDate.now());
+            reseña.setUtiles(0); // Inicializar en 0
+            
+            // Guardar en base de datos
+            reseñaController.crear(reseña);
+            
+            mostrarExito("Reseña creada exitosamente");
+            limpiarCampos();
+            
+            // Actualizar pestañas relacionadas
+            parent.getJuegosTab().actualizarTrasCrud();
+            parent.getUsuariosTab().actualizarTrasCrud();
+            parent.getReseñasTab().actualizarTrasCrud();
+            
+        } catch (NumberFormatException e) {
+            mostrarError("La puntuación debe ser un número válido");
+        }
+    }
+    
+    /**
+     * Actualiza una reseña existente
+     */
+    private void actualizarReseña() {
+        try {
+            // Obtener valores de los campos (usando las etiquetas correctas)
+            String puntuacionStr = obtenerTexto("Puntuación:");
+            String comentario = obtenerTextoArea("Comentario:");
+            boolean spoilers = obtenerCheckBox("Contiene Spoilers:");
+            
+            if (reseñaSeleccionada == null) {
+                mostrarError("Debes seleccionar una reseña para actualizar");
+                return;
+            }
+            
+            // Validaciones básicas
+            if (puntuacionStr.trim().isEmpty() || comentario.trim().isEmpty()) {
+                mostrarError("Puntuación y comentario son obligatorios");
+                return;
+            }
+            
+            if (usuarioRelacion == null) {
+                usuarioRelacion = reseñaSeleccionada.getUsuario();
+            }
+            if (videojuegoRelacion == null) {
+                videojuegoRelacion = reseñaSeleccionada.getVideojuego();
+            }
+            
+            // Validar puntuación
+            double puntuacion = Double.parseDouble(puntuacionStr);
+            if (puntuacion < 0.0 || puntuacion > 10.0) {
+                mostrarError("La puntuación debe estar entre 0.0 y 10.0");
+                return;
+            }
+            
+            // Actualizar reseña
+            reseñaSeleccionada.setPuntuacion(puntuacion);
+            reseñaSeleccionada.setComentario(comentario);
+            reseñaSeleccionada.setSpoilers(spoilers);
+            reseñaSeleccionada.setUsuario(usuarioRelacion);
+            reseñaSeleccionada.setVideojuego(videojuegoRelacion);
+            
+            // Guardar en base de datos
+            reseñaController.actualizar(reseñaSeleccionada);
+            
+            mostrarExito("Reseña actualizada exitosamente");
+            limpiarCampos();
+            
+            // Actualizar pestañas relacionadas
+            parent.getJuegosTab().actualizarTrasCrud();
+            parent.getUsuariosTab().actualizarTrasCrud();
+            parent.getReseñasTab().actualizarTrasCrud();
+            
+        } catch (NumberFormatException e) {
+            mostrarError("La puntuación debe ser un número válido");
+        }
+    }
+    
+    /**
+     * Obtiene el texto de un JTextField por su etiqueta
+     */
+    private String obtenerTexto(String etiqueta) {
+        JComponent campo = mapaCampos.get(etiqueta);
+        if (campo instanceof JTextField) {
+            return ((JTextField) campo).getText();
+        }
+        return "";
+    }
+    
+    /**
+     * Obtiene el texto de un JTextArea por su etiqueta (dentro de un JScrollPane)
+     */
+    private String obtenerTextoArea(String etiqueta) {
+        JComponent campo = mapaCampos.get(etiqueta);
+        if (campo instanceof JScrollPane) {
+            JScrollPane scroll = (JScrollPane) campo;
+            if (scroll.getViewport().getView() instanceof JTextArea) {
+                return ((JTextArea) scroll.getViewport().getView()).getText();
+            }
+        }
+        return "";
+    }
+    
+    /**
+     * Obtiene el valor de un JCheckBox por su etiqueta
+     */
+    private boolean obtenerCheckBox(String etiqueta) {
+        JComponent campo = mapaCampos.get(etiqueta);
+        if (campo instanceof JCheckBox) {
+            return ((JCheckBox) campo).isSelected();
+        }
+        return false;
+    }
+    
+    /**
+     * Obtiene la fecha de un JSpinner por su etiqueta
+     */
+    private LocalDate obtenerFecha(String etiqueta) {
+        JComponent campo = mapaCampos.get(etiqueta);
+        if (campo instanceof JSpinner) {
+            Date date = (Date) ((JSpinner) campo).getValue();
+            return date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+        }
+        return null;
+    }
+    
+    @SuppressWarnings("unchecked")
+    private Categoria obtenerCategoriaSeleccionada() {
+        return categoriaRelacion;
+    }
+    
+    @SuppressWarnings("unchecked")
+    private Usuario obtenerUsuarioSeleccionado() {
+        return usuarioRelacion;
+    }
+    
+    @SuppressWarnings("unchecked")
+    private Videojuego obtenerVideojuegoSeleccionado() {
+        return videojuegoRelacion;
+    }
+    
+    /**
+     * Limpia todos los campos del formulario
+     */
+    private void limpiarCampos() {
+        // Por desgracia no se como dejar esto mas bonito
+        for (JComponent campo : mapaCampos.values()) {
+            if (campo instanceof JTextField) {
+                ((JTextField) campo).setText("");
+            } else if (campo instanceof JTextArea) {
+                ((JTextArea) campo).setText("");
+            } else if (campo instanceof JCheckBox) {
+                ((JCheckBox) campo).setSelected(false);
+            } else if (campo instanceof JSpinner) {
+                // Resetear JSpinner a fecha actual
+                ((JSpinner) campo).setValue(new Date());
+            } else if (campo instanceof JScrollPane) {
+                JScrollPane scroll = (JScrollPane) campo;
+                if (scroll.getViewport().getView() instanceof JTextArea) {
+                    ((JTextArea) scroll.getViewport().getView()).setText("");
+                }
+            }
+        }
+        
+        // Limpiar relaciones seleccionadas
+        categoriaRelacion = null;
+        usuarioRelacion = null;
+        videojuegoRelacion = null;
+        
+        // Limpiar entidades seleccionadas para actualización
+        categoriaSeleccionada = null;
+        usuarioSeleccionado = null;
+        videojuegoSeleccionado = null;
+        reseñaSeleccionada = null;
+    }
+
+    /**
+     * Métodos para cargar datos de entidades existentes para editar
+     */
+    public void cargarCategoria(Categoria categoria) {
+        this.categoriaSeleccionada = categoria;
+        
+        // Cambiar a pestaña CRUD y seleccionar entidad correcta
+        cbModelos.setSelectedItem("Categoria");
+        
+        // Llenar campos con datos existentes
+        JTextField txtNombre = (JTextField) mapaCampos.get("Nombre:");
+        if (txtNombre != null) {
+            txtNombre.setText(categoria.getNombre());
+        }
+        
+        mostrarExito("Categoría cargada para edición");
+    }
+    
+    public void cargarUsuario(Usuario usuario) {
+        this.usuarioSeleccionado = usuario;
+        
+        // Cambiar a pestaña CRUD y seleccionar entidad correcta
+        cbModelos.setSelectedItem("Usuario");
+        
+        // Llenar campos con datos existentes
+        JTextField txtNombre = (JTextField) mapaCampos.get("Nombre:");
+        JTextField txtEmail = (JTextField) mapaCampos.get("Email:");
+        JTextField txtContraseña = (JTextField) mapaCampos.get("Contraseña:");
+        
+        if (txtNombre != null) txtNombre.setText(usuario.getNombre());
+        if (txtEmail != null) txtEmail.setText(usuario.getEmail());
+        if (txtContraseña != null) txtContraseña.setText(usuario.getContraseña());
+        
+        mostrarExito("Usuario cargado para edición");
+    }
+    
+    public void cargarVideojuego(Videojuego videojuego) {
+        this.videojuegoSeleccionado = videojuego;
+        
+        // Cambiar a pestaña CRUD y seleccionar entidad correcta
+        cbModelos.setSelectedItem("Videojuego");
+        
+        // Llenar campos con datos existentes
+        JTextField txtTitulo = (JTextField) mapaCampos.get("Título:");
+        JScrollPane scrollDescripcion = (JScrollPane) mapaCampos.get("Descripción:");
+        JSpinner spinnerFecha = (JSpinner) mapaCampos.get("Fecha Lanzamiento:");
+        JTextField txtCategoriaSeleccionada = (JTextField) mapaCampos.get("Categoría:");
+        
+        if (txtTitulo != null) txtTitulo.setText(videojuego.getTitulo());
+        
+        if (scrollDescripcion != null && scrollDescripcion.getViewport().getView() instanceof JTextArea) {
+            JTextArea txtDescripcion = (JTextArea) scrollDescripcion.getViewport().getView();
+            txtDescripcion.setText(videojuego.getDescripcion());
+        }
+        
+        if (spinnerFecha != null && videojuego.getFechaLanzamiento() != null) {
+            // Convertir LocalDate a Date para el JSpinner
+            Date fechaDate = Date.from(videojuego.getFechaLanzamiento()
+                .atStartOfDay(ZoneId.systemDefault()).toInstant());
+            spinnerFecha.setValue(fechaDate);
+        }
+        
+        if (txtCategoriaSeleccionada != null && videojuego.getCategoria() != null) {
+            txtCategoriaSeleccionada.setText(videojuego.getCategoria().getNombre());
+            this.categoriaRelacion = videojuego.getCategoria();
+        }
+        
+        mostrarExito("Videojuego cargado para edición");
+    }
+    
+    public void cargarReseña(Reseña reseña) {
+        this.reseñaSeleccionada = reseña;
+        
+        // Cambiar a pestaña CRUD y seleccionar entidad correcta
+        cbModelos.setSelectedItem("Reseña");
+        
+        // Llenar campos con datos existentes
+        JTextField txtPuntuacion = (JTextField) mapaCampos.get("Puntuación:");
+        JScrollPane scrollComentario = (JScrollPane) mapaCampos.get("Comentario:");
+        JCheckBox chkSpoilers = (JCheckBox) mapaCampos.get("Contiene Spoilers:");
+        JTextField txtUsuarioSeleccionado = (JTextField) mapaCampos.get("Usuario:");
+        JTextField txtVideojuegoSeleccionado = (JTextField) mapaCampos.get("Videojuego:");
+        
+        if (txtPuntuacion != null) {
+            txtPuntuacion.setText(String.valueOf(reseña.getPuntuacion()));
+        }
+        
+        if (scrollComentario != null && scrollComentario.getViewport().getView() instanceof JTextArea) {
+            JTextArea txtComentario = (JTextArea) scrollComentario.getViewport().getView();
+            txtComentario.setText(reseña.getComentario());
+        }
+        
+        if (chkSpoilers != null) {
+            chkSpoilers.setSelected(reseña.getSpoilers());
+        }
+        
+        if (txtUsuarioSeleccionado != null && reseña.getUsuario() != null) {
+            txtUsuarioSeleccionado.setText(reseña.getUsuario().getNombre());
+            this.usuarioRelacion = reseña.getUsuario();
+        }
+        
+        if (txtVideojuegoSeleccionado != null && reseña.getVideojuego() != null) {
+            txtVideojuegoSeleccionado.setText(reseña.getVideojuego().getTitulo());
+            this.videojuegoRelacion = reseña.getVideojuego();
+        }
+        
+        mostrarExito("Reseña cargada para edición");
+    }
+    
+    /**
+     * Métodos de selección para relaciones (cambiar categoría, usuario, videojuego)
+     */
+    private void seleccionarCategoria() {
+        if (parent != null) {
+            parent.getCategoriasTab().modoSeleccion();
+            parent.getTabPadre().setSelectedComponent(parent.getTabCategorias());
+        }
+    }
+    
+    private void seleccionarUsuario() {
+        if (parent != null) {
+            parent.getUsuariosTab().modoSeleccion();
+            parent.getTabPadre().setSelectedComponent(parent.getTabUsuarios());
+        }
+    }
+    
+    private void seleccionarVideojuego() {
+        if (parent != null) {
+            parent.getJuegosTab().modoSeleccion(true);
+            parent.getTabPadre().setSelectedComponent(parent.getTabJuegos());
+
+        }
+    }
+    
+    /**
+     * Métodos para establecer entidades seleccionadas desde otras pestañas (para relaciones)
+     */
+    public void setCategoria(Categoria categoria) {
+        this.categoriaRelacion = categoria;
+        // Si estamos en modo videojuego, actualizar el campo de categoría
+        JTextField txtCategoria = (JTextField) mapaCampos.get("Categoría:");
+        if (txtCategoria != null) {
+            txtCategoria.setText(categoria.getNombre());
+            mostrarExito("Categoría seleccionada: " + categoria.getNombre());
+        }
+    }
+    
+    public void setUsuario(Usuario usuario) {
+        this.usuarioRelacion = usuario;
+        // Si estamos en modo reseña, actualizar el campo de usuario
+        JTextField txtUsuario = (JTextField) mapaCampos.get("Usuario:");
+        if (txtUsuario != null) {
+            txtUsuario.setText(usuario.getNombre());
+            mostrarExito("Usuario seleccionado: " + usuario.getNombre());
+        }
+    }
+
+    /**
+     * Método para compatibilidad con PublicarTab (selección de videojuego para relación)
+     */
+    public void setVideojuego(Videojuego videojuego) {
+        this.videojuegoRelacion = videojuego;
+        // Si estamos en modo reseña, actualizar el campo de videojuego
+        JTextField txtVideojuego = (JTextField) mapaCampos.get("Videojuego:");
+        if (txtVideojuego != null) {
+            txtVideojuego.setText(videojuego.getTitulo());
+            mostrarExito("Videojuego seleccionado: " + videojuego.getTitulo());
+        }
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnActualizar;
+    private javax.swing.JButton btnCrear;
+    private javax.swing.JComboBox<String> cbModelos;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JPanel jPanel1;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JPanel panelCrud;
+    private javax.swing.JTextArea txtAreaErrores;
     // End of variables declaration//GEN-END:variables
 }
+

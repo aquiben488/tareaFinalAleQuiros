@@ -30,7 +30,6 @@ import views.MainFrame;
  */
 public class ReseñasTab extends javax.swing.JPanel {
 
-    
     private ReseñaController reseñaController;
     private VideojuegoController videojuegoController;
     private UsuarioController usuarioController;
@@ -126,7 +125,8 @@ public class ReseñasTab extends javax.swing.JPanel {
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated
     // <editor-fold defaultstate="collapsed" desc="Generated
-    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+    // <editor-fold defaultstate="collapsed" desc="Generated
+    // Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
         jPanel1 = new javax.swing.JPanel();
@@ -217,86 +217,97 @@ public class ReseñasTab extends javax.swing.JPanel {
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 482, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel1)
-                            .addComponent(rBtnBuscTituloJuego)
-                            .addComponent(rBtnBuscUsuario)
-                            .addComponent(rBtnBuscPuntuacion)
-                            .addComponent(jLabel2)
-                            .addComponent(rBtnOrdenFecha)
-                            .addComponent(rBtnOrdenUtiles)
-                            .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addComponent(rBtnAscendente)
-                                .addGap(32, 32, 32)
-                                .addComponent(rBtnDescendente))
-                            .addComponent(btnUtil, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(0, 6, Short.MAX_VALUE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                        .addGap(18, 18, 18)
-                        .addComponent(BtnReset)
-                        .addGap(18, 18, 18)
-                        .addComponent(BarraBusqueda, javax.swing.GroupLayout.PREFERRED_SIZE, 250, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(BtnBuscar)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(btnCRUDEditar, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btnCRUDEliminar)))
-                .addContainerGap())
-        );
+                jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addGroup(jPanel1Layout.createSequentialGroup()
+                                                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 482,
+                                                        javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                                .addGroup(jPanel1Layout
+                                                        .createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                                        .addComponent(jLabel1)
+                                                        .addComponent(rBtnBuscTituloJuego)
+                                                        .addComponent(rBtnBuscUsuario)
+                                                        .addComponent(rBtnBuscPuntuacion)
+                                                        .addComponent(jLabel2)
+                                                        .addComponent(rBtnOrdenFecha)
+                                                        .addComponent(rBtnOrdenUtiles)
+                                                        .addGroup(jPanel1Layout.createSequentialGroup()
+                                                                .addComponent(rBtnAscendente)
+                                                                .addGap(32, 32, 32)
+                                                                .addComponent(rBtnDescendente))
+                                                        .addComponent(btnUtil, javax.swing.GroupLayout.PREFERRED_SIZE,
+                                                                54, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                                .addGap(0, 6, Short.MAX_VALUE))
+                                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout
+                                                .createSequentialGroup()
+                                                .addGap(18, 18, 18)
+                                                .addComponent(BtnReset)
+                                                .addGap(18, 18, 18)
+                                                .addComponent(BarraBusqueda, javax.swing.GroupLayout.PREFERRED_SIZE,
+                                                        250, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                                .addComponent(BtnBuscar)
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED,
+                                                        javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                                .addComponent(btnCRUDEditar, javax.swing.GroupLayout.PREFERRED_SIZE, 67,
+                                                        javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                .addComponent(btnCRUDEliminar)))
+                                .addContainerGap()));
         jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(18, 18, 18)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(BtnReset)
-                    .addComponent(BarraBusqueda, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(BtnBuscar)
-                    .addComponent(btnCRUDEditar)
-                    .addComponent(btnCRUDEliminar))
-                .addGap(18, 18, 18)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 306, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(btnUtil)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jLabel1)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(rBtnBuscTituloJuego)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(rBtnBuscUsuario)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(rBtnBuscPuntuacion)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jLabel2)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(rBtnOrdenFecha)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(rBtnOrdenUtiles)
-                        .addGap(18, 18, 18)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(rBtnAscendente)
-                            .addComponent(rBtnDescendente))
-                        .addGap(38, 38, 38)))
-                .addGap(0, 0, Short.MAX_VALUE))
-        );
+                jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addGap(18, 18, 18)
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                        .addComponent(BtnReset)
+                                        .addComponent(BarraBusqueda, javax.swing.GroupLayout.PREFERRED_SIZE,
+                                                javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(BtnBuscar)
+                                        .addComponent(btnCRUDEditar)
+                                        .addComponent(btnCRUDEliminar))
+                                .addGap(18, 18, 18)
+                                .addGroup(jPanel1Layout
+                                        .createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 306,
+                                                javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addGroup(jPanel1Layout.createSequentialGroup()
+                                                .addComponent(btnUtil)
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED,
+                                                        javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                                .addComponent(jLabel1)
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                                .addComponent(rBtnBuscTituloJuego)
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                .addComponent(rBtnBuscUsuario)
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                .addComponent(rBtnBuscPuntuacion)
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                                .addComponent(jLabel2)
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                                .addComponent(rBtnOrdenFecha)
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                .addComponent(rBtnOrdenUtiles)
+                                                .addGap(18, 18, 18)
+                                                .addGroup(jPanel1Layout
+                                                        .createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                                        .addComponent(rBtnAscendente)
+                                                        .addComponent(rBtnDescendente))
+                                                .addGap(38, 38, 38)))
+                                .addGap(0, 0, Short.MAX_VALUE)));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-        );
+                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE,
+                                javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE));
         layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-        );
+                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE,
+                                javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE));
     }// </editor-fold>//GEN-END:initComponents
 
     private void AreaListaReseñasMouseClicked(java.awt.event.MouseEvent evt) {// GEN-FIRST:event_AreaListaReseñasMouseClicked
@@ -319,18 +330,19 @@ public class ReseñasTab extends javax.swing.JPanel {
     private void BtnBuscarActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_BtnBuscarActionPerformed
         if (BarraBusqueda.getText().isEmpty()) {
             MostrarTodosLasReseñas();
-        }
-        if (rBtnBuscTituloJuego.isSelected()) {
-            FiltrarPorTitulo(BarraBusqueda.getText());
-        }
-        if (rBtnBuscUsuario.isSelected()) {
-            FiltrarPorUsuario(BarraBusqueda.getText());
-        }
-        if (rBtnBuscPuntuacion.isSelected()) {
-            try {
-                FiltrarPorPuntuacionMinima(Double.parseDouble(BarraBusqueda.getText()));
-            } catch (NumberFormatException e) {
-                MostrarError("La puntuación debe ser un número decimal (0.0 - 10.0) con puntos como separador");
+        } else {
+            if (rBtnBuscTituloJuego.isSelected()) {
+                FiltrarPorTitulo(BarraBusqueda.getText());
+            }
+            if (rBtnBuscUsuario.isSelected()) {
+                FiltrarPorUsuario(BarraBusqueda.getText());
+            }
+            if (rBtnBuscPuntuacion.isSelected()) {
+                try {
+                    FiltrarPorPuntuacionMinima(Double.parseDouble(BarraBusqueda.getText()));
+                } catch (NumberFormatException e) {
+                    MostrarError("La puntuación debe ser un número decimal (0.0 - 10.0) con puntos como separador");
+                }
             }
         }
     }// GEN-LAST:event_BtnBuscarActionPerformed
@@ -338,8 +350,11 @@ public class ReseñasTab extends javax.swing.JPanel {
     private void btnCRUDEditarActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_btnCRUDEditarActionPerformed
         Reseña reseña = AreaListaReseñas.getSelectedValue();
         if (reseña != null) {
-            // TODO: Implementar la funcionalidad de editar una reseña
-            // parent.irAEditarReseña(reseña);
+            // Navegar a CrudTab y cargar datos de la reseña
+            parent.getTabPadre().setSelectedComponent(parent.getTabCrud());
+            parent.getCrudTab().cargarReseña(reseña);
+        } else {
+            MostrarError("Selecciona una reseña para editar");
         }
     }// GEN-LAST:event_btnCRUDEditarActionPerformed
 
@@ -349,12 +364,12 @@ public class ReseñasTab extends javax.swing.JPanel {
             // TODO Implementar popUp de confirmacion
             try {
                 reseñaController.eliminar(reseña.getIdReseña());
-                
+
                 // Actualizar pestañas relacionadas
                 parent.getJuegosTab().actualizarTrasCrud(); // Actualiza estadísticas de videojuegos
                 parent.getUsuariosTab().actualizarTrasCrud(); // Actualiza estadísticas de usuarios
                 actualizarTrasCrud(); // Actualiza esta misma pestaña
-                
+
             } catch (IllegalArgumentException e) {
                 MostrarError("Error: " + e.getMessage() + ". Inténtelo de nuevo.");
             } catch (RuntimeException e) {
@@ -368,10 +383,10 @@ public class ReseñasTab extends javax.swing.JPanel {
         if (reseña != null) {
             try {
                 reseñaController.marcarComoUtil(reseña.getIdReseña());
-                
+
                 // Actualizar para mostrar el nuevo contador de útiles
                 actualizarTrasCrud();
-                
+
             } catch (IllegalArgumentException e) {
                 MostrarError("Error: " + e.getMessage() + ". Inténtelo de nuevo.");
             } catch (RuntimeException e) {
@@ -600,7 +615,8 @@ public class ReseñasTab extends javax.swing.JPanel {
                     .append(reseña.getUtiles() != null ? reseña.getUtiles() : 0);
 
             if (reseña.getFechaReseña() != null) {
-                headerText.append(" | 📅").append(reseña.getFechaReseña().format(DateTimeFormatter.ofPattern("dd/MM/yy")));
+                headerText.append(" | 📅")
+                        .append(reseña.getFechaReseña().format(DateTimeFormatter.ofPattern("dd/MM/yy")));
             }
 
             if (reseña.getSpoilers() != null && reseña.getSpoilers()) {

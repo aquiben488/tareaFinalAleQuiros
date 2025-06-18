@@ -91,9 +91,9 @@ public class ReseñaController {
     public void actualizar(Reseña reseña) {
         EntityManager em = PersistenceManager.getEntityManager();
         try {
-            String mensaje = "";
-            if (!comprobarIntegridad(em, reseña, mensaje)) {
-                throw new IllegalArgumentException(mensaje); // si no se cumple, se lanza una excepcion
+            String mensaje = comprobarIntegridad(em, reseña);
+            if (!mensaje.isEmpty()) {
+                throw new IllegalArgumentException(mensaje);
             }
             em.getTransaction().begin();
             em.merge(reseña);
@@ -337,19 +337,19 @@ public class ReseñaController {
         }
     }
 
-    private boolean comprobarIntegridad(EntityManager em, Reseña reseña, String mensaje) {
-        Usuario usu = em.find(Usuario.class, reseña.getIdUsuario().getIdUsuario());
-        Videojuego vj = em.find(Videojuego.class, reseña.getIdVideojuego().getIdVideojuego());
-        // si alguno es null, se lanza una excepcion
-        if (vj == null || usu == null) {
-            if (vj == null && usu == null) {
-                mensaje = "El videojuego y el usuario no existen";
-                return false;
-            }
-            mensaje = vj == null ? "El videojuego no existe" : "El usuario no existe";
-            return false;
+    private String comprobarIntegridad(EntityManager em, Reseña reseña) {
+        Usuario usu = em.find(Usuario.class, reseña.getUsuario().getIdUsuario());
+        Videojuego vj = em.find(Videojuego.class, reseña.getVideojuego().getIdVideojuego());
+        if (vj == null && usu == null) {
+            return "El videojuego y el usuario no existen";
         }
-        return true;
+        if (vj == null) {
+            return "El videojuego no existe";
+        }
+        if (usu == null) {
+            return "El usuario no existe";
+        }
+        return ""; // Sin errores
     }
 
 }
