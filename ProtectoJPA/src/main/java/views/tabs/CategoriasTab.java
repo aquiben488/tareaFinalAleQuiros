@@ -253,7 +253,12 @@ public class CategoriasTab extends javax.swing.JPanel {
             // TODO Implementar popUp de confirmacion
             try {
                 categoriaController.eliminar(categoria.getIdCategoria());
-                MostrarTodasLasCategorias(); // Recargar lista tras eliminación exitosa
+                
+                // Actualizar pestañas relacionadas
+                parent.getJuegosTab().actualizarTrasCrud(); // Actualiza videojuegos (eliminados en cascada)
+                parent.getReseñasTab().actualizarTrasCrud(); // Actualiza reseñas (eliminadas en cascada)
+                actualizarTrasCrud(); // Actualiza esta misma pestaña
+                
             } catch (IllegalArgumentException e) {
                 MostrarError("Error: " + e.getMessage() + ". Inténtelo de nuevo.");
             } catch (RuntimeException e) {
@@ -320,9 +325,10 @@ public class CategoriasTab extends javax.swing.JPanel {
      * se crea una categoria temporal con el mensaje de error
      * (mejor que hacer un JOptionPane)
      */
-    private void MostrarError(String mensaje) {
+    public void MostrarError(String mensaje) {
         DefaultListModel<Categoria> modeloLista = new DefaultListModel<>();
-        modeloLista.addElement(new Categoria(){
+        // Crear una categoria temporal con el mensaje de error
+        modeloLista.addElement(new Categoria() {
             @Override
             public String toString() {
                 return mensaje;
@@ -341,6 +347,14 @@ public class CategoriasTab extends javax.swing.JPanel {
         };
         
         return (rBtnAscendente.isSelected()) ? comparator : comparator.reversed();
+    }
+
+    /**
+     * Actualiza la lista tras operaciones CRUD
+     * Simula "pulsar buscar" para mantener el contexto actual del usuario
+     */
+    public void actualizarTrasCrud() {
+        BtnBuscarActionPerformed(null);
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

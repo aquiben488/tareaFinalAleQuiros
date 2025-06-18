@@ -5,8 +5,8 @@
 package models;
 
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.util.Collection;
-import java.util.Date;
 
 import jakarta.persistence.Basic;
 import jakarta.persistence.CascadeType;
@@ -22,8 +22,6 @@ import jakarta.persistence.NamedQueries;
 import jakarta.persistence.NamedQuery;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
-import jakarta.persistence.Temporal;
-import jakarta.persistence.TemporalType;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlTransient;
 
@@ -54,8 +52,7 @@ public class Videojuego implements Serializable {
     @Column(name = "descripcion")
     private String descripcion;
     @Column(name = "fechaLanzamiento")
-    @Temporal(TemporalType.DATE)
-    private Date fechaLanzamiento;
+    private LocalDate fechaLanzamiento;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "videojuego")
     private Collection<Reseña> reseñasCollection;
     @JoinColumn(name = "idCategoria", referencedColumnName = "idCategoria")
@@ -98,11 +95,11 @@ public class Videojuego implements Serializable {
         this.descripcion = descripcion;
     }
 
-    public Date getFechaLanzamiento() {
+    public LocalDate getFechaLanzamiento() {
         return fechaLanzamiento;
     }
 
-    public void setFechaLanzamiento(Date fechaLanzamiento) {
+    public void setFechaLanzamiento(LocalDate fechaLanzamiento) {
         this.fechaLanzamiento = fechaLanzamiento;
     }
 

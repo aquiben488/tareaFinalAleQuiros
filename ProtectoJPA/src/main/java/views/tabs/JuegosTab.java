@@ -6,6 +6,8 @@ package views.tabs;
 
 import javax.swing.ButtonGroup;
 import javax.swing.DefaultListModel;
+import javax.swing.JOptionPane;
+
 import controllers.CategoriaController;
 import controllers.VideojuegoController;
 import java.util.Comparator;
@@ -23,6 +25,15 @@ public class JuegosTab extends javax.swing.JPanel {
     private boolean modoAdmin = false;
     private VideojuegoController videojuegoController;
     private CategoriaController categoriaController;
+    
+    // Variables para modo selección
+    // necesario para CRUD y para Publicar
+    private boolean modoSeleccion = false;
+    /*
+     * Como Juegos se selecciona para CRUD o Publicar,
+     * se necesita saber si es para CRUD o para Publicar
+     */
+    private Boolean esCrud = null;
 
     /**
      * Creates new form VideojuegosTab
@@ -54,6 +65,7 @@ public class JuegosTab extends javax.swing.JPanel {
         rBtnBuscTitulo.setSelected(true); // Buscar por título por defecto
         rBtnOrdenTitulo.setSelected(true); // Ordenar por título por defecto
         rBtnAscendente.setSelected(true); // Orden ascendente por defecto
+        lblSeleccion.setVisible(false); // No mostrar el label de edición por defecto
     }
 
     /**
@@ -73,8 +85,42 @@ public class JuegosTab extends javax.swing.JPanel {
      */
     public void actualizarModoAdmin(boolean modoAdmin) {
         this.modoAdmin = modoAdmin;
+        if (!modoSeleccion) {
         this.btnCRUDEditar.setVisible(modoAdmin);
         this.btnCRUDEliminar.setVisible(modoAdmin);
+        }
+    }
+
+    public void modoSeleccion(boolean esCrud) {
+        if (modoSeleccion && (esCrud != this.esCrud)) {
+            String mensajeError = """
+            No puedes cambiar el modo de seleccion
+            de CRUD a Publicar o viceversa sin terminar la operacion
+            """;
+            JOptionPane.showMessageDialog(null, mensajeError);
+            return;
+        }
+        this.modoSeleccion = true;
+        lblSeleccion.setVisible(true);
+        btnCRUDEditar.setVisible(false);
+        btnCRUDEliminar.setVisible(false);
+        this.esCrud = esCrud;
+    }
+
+    public void terminarModoSeleccion() {
+        lblSeleccion.setVisible(false);
+        btnCRUDEditar.setVisible(modoAdmin);
+        btnCRUDEliminar.setVisible(modoAdmin);
+        
+        // Regresar a la pestaña apropiada según el tipo de selección
+        if (esCrud != null && esCrud) {
+            parent.getTabPadre().setSelectedComponent(parent.getCrudTab());
+        } else {
+            parent.getTabPadre().setSelectedComponent(parent.getTabPublicar());
+        }
+        
+        esCrud = null;
+        this.modoSeleccion = false;
     }
 
     /**
@@ -104,6 +150,7 @@ public class JuegosTab extends javax.swing.JPanel {
         rBtnDescendente = new javax.swing.JRadioButton();
         btnCRUDEditar = new javax.swing.JButton();
         btnCRUDEliminar = new javax.swing.JButton();
+        lblSeleccion = new javax.swing.JLabel();
 
         AreaListaJuegos.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
@@ -166,14 +213,15 @@ public class JuegosTab extends javax.swing.JPanel {
             }
         });
 
+        lblSeleccion.setText("Selecciona un juego");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                     .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
-                        .addGap(0, 0, 0)
                         .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 482, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -189,7 +237,8 @@ public class JuegosTab extends javax.swing.JPanel {
                                     .addComponent(rBtnAscendente)
                                     .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                     .addComponent(rBtnDescendente))
-                                .addComponent(rBtnOrdenFecha, javax.swing.GroupLayout.Alignment.LEADING))))
+                                .addComponent(rBtnOrdenFecha, javax.swing.GroupLayout.Alignment.LEADING))
+                            .addComponent(lblSeleccion)))
                     .addGroup(layout.createSequentialGroup()
                         .addGap(18, 18, 18)
                         .addComponent(BtnReset)
@@ -235,7 +284,9 @@ public class JuegosTab extends javax.swing.JPanel {
                         .addGap(18, 18, 18)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(rBtnAscendente)
-                            .addComponent(rBtnDescendente))))
+                            .addComponent(rBtnDescendente))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(lblSeleccion)))
                 .addGap(0, 0, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
@@ -290,8 +341,18 @@ public class JuegosTab extends javax.swing.JPanel {
     private void AreaListaJuegosMouseClicked(java.awt.event.MouseEvent evt) {// GEN-FIRST:event_AreaListaJuegosMouseClicked
         if (evt.getClickCount() == 2) { // Doble clic
             Videojuego videojuego = AreaListaJuegos.getSelectedValue();
-            if (videojuego != null) {
-                parent.irAReseñasDeJuego(videojuego);
+            if (modoSeleccion) {
+                if (esCrud) {
+                    parent.getCrudTab().setVideojuego(videojuego);
+                    this.terminarModoSeleccion();
+                }else{
+                    parent.getPublicarTab().setVideojuego(videojuego);
+                    this.terminarModoSeleccion();
+                }
+            }else{
+                if (videojuego != null) {
+                    parent.irAReseñasDeJuego(videojuego);
+                }
             }
         }
     }// GEN-LAST:event_AreaListaJuegosMouseClicked
@@ -318,7 +379,12 @@ public class JuegosTab extends javax.swing.JPanel {
             // TODO Implementar popUp de confirmacion
             try {
                 videojuegoController.eliminar(videojuego.getIdVideojuego());
-                MostrarTodosLosJuegos(); // Recargar lista tras eliminación exitosa
+                
+                // Actualizar pestañas relacionadas
+                parent.getCategoriasTab().actualizarTrasCrud(); // Actualiza estadísticas de categorías
+                parent.getReseñasTab().actualizarTrasCrud(); // Actualiza reseñas (eliminadas en cascada)
+                actualizarTrasCrud(); // Actualiza esta misma pestaña
+                
             } catch (IllegalArgumentException e) {
                 MostrarError("Error: " + e.getMessage() + ". Inténtelo de nuevo.");
             } catch (RuntimeException e) {
@@ -474,6 +540,14 @@ public class JuegosTab extends javax.swing.JPanel {
         return (rBtnAscendente.isSelected()) ? comparator : comparator.reversed();
     }
 
+    /**
+     * Actualiza la lista tras operaciones CRUD
+     * Simula "pulsar buscar" para mantener el contexto actual del usuario
+     */
+    public void actualizarTrasCrud() {
+        BtnBuscarActionPerformed(null);
+    }
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JList<Videojuego> AreaListaJuegos;
     private javax.swing.JTextField BarraBusqueda;
@@ -484,6 +558,7 @@ public class JuegosTab extends javax.swing.JPanel {
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JLabel lblSeleccion;
     private javax.swing.JRadioButton rBtnAscendente;
     private javax.swing.JRadioButton rBtnBuscCategoria;
     private javax.swing.JRadioButton rBtnBuscFecha;

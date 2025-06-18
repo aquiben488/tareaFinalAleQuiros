@@ -5,8 +5,8 @@
 package models;
 
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.util.Collection;
-import java.util.Date;
 
 import jakarta.persistence.Basic;
 import jakarta.persistence.CascadeType;
@@ -19,8 +19,6 @@ import jakarta.persistence.NamedQueries;
 import jakarta.persistence.NamedQuery;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
-import jakarta.persistence.Temporal;
-import jakarta.persistence.TemporalType;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlTransient;
 
@@ -59,8 +57,7 @@ public class Usuario implements Serializable {
     @Column(name = "contraseña")
     private String contraseña;
     @Column(name = "fechaRegistro")
-    @Temporal(TemporalType.DATE)
-    private Date fechaRegistro;
+    private LocalDate fechaRegistro;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "usuario")
     private Collection<Reseña> reseñasCollection;
 
@@ -110,11 +107,11 @@ public class Usuario implements Serializable {
         this.contraseña = contraseña;
     }
 
-    public Date getFechaRegistro() {
+    public LocalDate getFechaRegistro() {
         return fechaRegistro;
     }
 
-    public void setFechaRegistro(Date fechaRegistro) {
+    public void setFechaRegistro(LocalDate fechaRegistro) {
         this.fechaRegistro = fechaRegistro;
     }
 

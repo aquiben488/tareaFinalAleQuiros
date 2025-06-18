@@ -222,7 +222,11 @@ public class UsuariosTab extends javax.swing.JPanel {
             // TODO Implementar popUp de confirmacion
             try {
                 usuarioController.eliminar(usuario.getIdUsuario());
-                MostrarTodosLosUsuarios(); // Recargar lista tras eliminación exitosa
+                
+                // Actualizar pestañas relacionadas
+                parent.getReseñasTab().actualizarTrasCrud(); // Actualiza reseñas (transferidas al usuario 1)
+                actualizarTrasCrud(); // Actualiza esta misma pestaña
+                
             } catch (IllegalArgumentException e) {
                 MostrarError("Error: " + e.getMessage() + ". Inténtelo de nuevo.");
             } catch (RuntimeException e) {
@@ -311,9 +315,10 @@ public class UsuariosTab extends javax.swing.JPanel {
      * se crea un usuario temporal con el mensaje de error
      * (mejor que hacer un JOptionPane)
      */
-    private void MostrarError(String mensaje) {
+    public void MostrarError(String mensaje) {
         DefaultListModel<Usuario> modeloLista = new DefaultListModel<>();
-        modeloLista.addElement(new Usuario(){
+        // Crear un usuario temporal con el mensaje de error
+        modeloLista.addElement(new Usuario() {
             @Override
             public String toString() {
                 return mensaje;
@@ -334,6 +339,13 @@ public class UsuariosTab extends javax.swing.JPanel {
         return (rBtnAscendente.isSelected()) ? comparator : comparator.reversed();
     }
 
+    /**
+     * Actualiza la lista tras operaciones CRUD
+     * Simula "pulsar buscar" para mantener el contexto actual del usuario
+     */
+    public void actualizarTrasCrud() {
+        BtnBuscarActionPerformed(null);
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JList<Usuario> AreaListaUsuarios;

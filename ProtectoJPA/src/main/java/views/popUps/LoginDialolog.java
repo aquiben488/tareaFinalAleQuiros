@@ -223,7 +223,6 @@ public class LoginDialolog extends javax.swing.JDialog {
     }//GEN-LAST:event_lblContraseñaMouseClicked
 
     private void txtEmailKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtEmailKeyPressed
-        // TODO add your handling code here:
     }//GEN-LAST:event_txtEmailKeyPressed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed

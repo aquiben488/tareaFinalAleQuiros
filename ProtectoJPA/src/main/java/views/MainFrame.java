@@ -16,6 +16,8 @@ import views.tabs.AjustesTab;
 import models.Usuario;
 import java.awt.BorderLayout;
 
+import javax.swing.JPanel;
+
 /**
  *
  * @author ale
@@ -89,6 +91,45 @@ public class MainFrame extends javax.swing.JFrame {
         // Configurar visibilidad inicial de pestaña CRUD
         actualizarVisibilidadCrud();
     }
+
+    public javax.swing.JTabbedPane getTabPadre() {
+        return tabPadre;
+    }
+    public JuegosTab getJuegosTab() {
+        return juegosTab;
+    }
+    public UsuariosTab getUsuariosTab() {
+        return usuariosTab;
+    }
+    public CategoriasTab getCategoriasTab() {
+        return categoriasTab;
+    }
+    public CrudTab getCrudTab() {
+        return crudTab;
+    }
+    public PublicarTab getPublicarTab() {
+        return publicarTab;
+    }
+    public ReseñasTab getReseñasTab() {
+        return reseñasTab;
+    }
+
+    public JPanel getTabJuegos() {
+        return tabJuegos;
+    }
+    public JPanel getTabUsuarios() {
+        return tabUsuarios;
+    }
+    public JPanel getTabCategorias() {
+        return tabCategorias;
+    }
+    public JPanel getTabCrud() {
+        return tabCrud;
+    }
+    public JPanel getTabPublicar() {
+        return tabBuscar;
+    }
+
     
     // Métodos para navegación entre pestañas
     public void irAReseñasDeJuego(models.Videojuego juego) {

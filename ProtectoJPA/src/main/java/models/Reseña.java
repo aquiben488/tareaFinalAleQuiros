@@ -79,6 +79,23 @@ public class Reseña implements Serializable {
         this.puntuacion = puntuacion;
     }
 
+    public Reseña(String puntuacion, String comentario, Boolean spoilers, Usuario usuario, Videojuego videojuego) {
+        try {
+            this.puntuacion = Double.valueOf(puntuacion);
+            if (this.puntuacion < 0 || this.puntuacion > 10) {
+                throw new IllegalArgumentException("La puntuación debe estar entre 0 y 10");
+            }
+        } catch (NumberFormatException e) {
+            throw new IllegalArgumentException("La puntuación debe ser un número válido");
+        }
+        this.comentario = comentario;
+        this.spoilers = spoilers;
+        this.usuario = usuario;
+        this.videojuego = videojuego;
+        this.fechaReseña = LocalDate.now();
+        this.utiles = 0;
+    }
+
     public Integer getIdReseña() {
         return idReseña;
     }

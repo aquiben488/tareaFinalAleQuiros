@@ -154,8 +154,17 @@ public class AjustesTab extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnEnviarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEnviarActionPerformed
+        // Guardar estado anterior para detectar cambios
+        boolean spoilersAnterior = parent.isMostrarSpoilers();
+        
+        // Aplicar nuevas configuraciones
         parent.setModoAdmin(rBtnModoAdmin.isSelected());
         parent.setMostrarSpoilers(rBtnSpoilers.isSelected());
+        
+        // Solo actualizar ReseñasTab si cambió la configuración de spoilers
+        if (spoilersAnterior != rBtnSpoilers.isSelected()) {
+            parent.getReseñasTab().actualizarTrasCrud();
+        }
     }//GEN-LAST:event_btnEnviarActionPerformed
 
 

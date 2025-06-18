@@ -349,7 +349,12 @@ public class ReseñasTab extends javax.swing.JPanel {
             // TODO Implementar popUp de confirmacion
             try {
                 reseñaController.eliminar(reseña.getIdReseña());
-                MostrarTodosLasReseñas(); // Recargar lista tras eliminación exitosa
+                
+                // Actualizar pestañas relacionadas
+                parent.getJuegosTab().actualizarTrasCrud(); // Actualiza estadísticas de videojuegos
+                parent.getUsuariosTab().actualizarTrasCrud(); // Actualiza estadísticas de usuarios
+                actualizarTrasCrud(); // Actualiza esta misma pestaña
+                
             } catch (IllegalArgumentException e) {
                 MostrarError("Error: " + e.getMessage() + ". Inténtelo de nuevo.");
             } catch (RuntimeException e) {
@@ -363,6 +368,10 @@ public class ReseñasTab extends javax.swing.JPanel {
         if (reseña != null) {
             try {
                 reseñaController.marcarComoUtil(reseña.getIdReseña());
+                
+                // Actualizar para mostrar el nuevo contador de útiles
+                actualizarTrasCrud();
+                
             } catch (IllegalArgumentException e) {
                 MostrarError("Error: " + e.getMessage() + ". Inténtelo de nuevo.");
             } catch (RuntimeException e) {
@@ -591,7 +600,7 @@ public class ReseñasTab extends javax.swing.JPanel {
                     .append(reseña.getUtiles() != null ? reseña.getUtiles() : 0);
 
             if (reseña.getFechaReseña() != null) {
-                headerText.append(" | 📅").append(reseña.getFechaReseña().format(DateTimeFormatter.ofPattern("MM/yy")));
+                headerText.append(" | 📅").append(reseña.getFechaReseña().format(DateTimeFormatter.ofPattern("dd/MM/yy")));
             }
 
             if (reseña.getSpoilers() != null && reseña.getSpoilers()) {
@@ -621,6 +630,14 @@ public class ReseñasTab extends javax.swing.JPanel {
 
             return panelReseña;
         }
+    }
+
+    /**
+     * Actualiza la lista tras operaciones CRUD
+     * Simula "pulsar buscar" para mantener el contexto actual del usuario
+     */
+    public void actualizarTrasCrud() {
+        BtnBuscarActionPerformed(null);
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

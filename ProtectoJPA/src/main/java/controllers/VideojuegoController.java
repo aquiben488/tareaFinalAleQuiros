@@ -267,10 +267,8 @@ public class VideojuegoController {
             // Categoría y año
             texto.append(" | ").append(videojuego.getCategoria().getNombre());
             
-            // Extraer año de la fecha de lanzamiento
-            java.util.Calendar calendar = java.util.Calendar.getInstance();
-            calendar.setTime(videojuego.getFechaLanzamiento());
-            int año = calendar.get(java.util.Calendar.YEAR);
+            // Extraer año de la fecha de lanzamiento (ahora con LocalDate es más simple)
+            int año = videojuego.getFechaLanzamiento().getYear();
             texto.append(" | ").append(año);
             
             // Estadísticas de reseñas
